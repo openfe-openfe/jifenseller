@@ -54,6 +54,7 @@
         })
 
         if (this.listenScroll) {
+          // console.log(123123)
           let me = this
           this.scroll.on('scroll', (pos) => {
             // 监听滚动，派发滚动事件，拿到位置

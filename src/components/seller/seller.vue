@@ -5,7 +5,9 @@
 				<h1 class="title">{{ValidateAccount.seller_name}}</h1>
 		</div>
 		<div class="sellerContain">
-			<scroll ref="scroll" class="sellerContent" :data="zdList">
+			<scroll  @scroll="scroll"
+					 :listen-scroll="listenScroll"
+					 ref="scroll" class="sellerContent" :data="zdList">
 				<div>
 					<div class="m-header">
 					<div class="m-money">
@@ -38,12 +40,21 @@
 				<div class="zdlist">
 					<div @click="selectItem(item)" class="zdItem" v-for="item in zdList">
 						<div class="itemname">
-							<div>手机充值</div>
-							<div class="num">+50.00</div>
+							<div>{{item.title}}</div>
+							<div class="xfnum" v-if="item.types == 'xf'">-{{item.amount}}</div>
+							<div class="kfnum" v-if="item.types == 'kf'">-{{item.amount}}</div>
+							<div class="num" v-if="item.types == 'cz'">
+								+{{item.amount}}
+							</div>
+							<div class="txnum" v-if="item.types == 'tx'">-{{item.amount}}</div>
 						</div>
 						<div class="itemtime">
-							<div class="">2017/04/24 13:50</div>
-							<div class="itemtitle">充值成功</div>
+							<div class="">{{item.showtime}}</div>
+							<div class="txitemtitle" v-if="item.types == 'tx'" >
+								<span>{{item.status}}</span>
+								<i class="icon-right"></i>
+							</div>
+							<div class="itemtitle" v-if="item.types == 'cz'" >{{item.status}}</div>
 						</div>
 					</div>
 				</div>
@@ -73,10 +84,12 @@ export default {
 		zdList: [],
 		eyeOpen:true,
 		eyeClose:false,
-		shuffleArry:['富可敌国','腰缠万贯','富贵荣华','挥金如土','财大气粗','富贵逼人']
+		shuffleArry:['富可敌国','腰缠万贯','富贵荣华','挥金如土','财大气粗','富贵逼人'],
+		scrollY: -1,
       }
     },
   created() {
+	  this.listenScroll = true
       this._getValidateAccount()
 	  this._getConsumptionLogs()
 	  this.checkOpen()
@@ -104,7 +117,11 @@ export default {
 			}
         })
 	  },
-
+		scroll(pos) {
+			// console.log(pos)
+			this.scrollY = pos.y
+			console.log(this.scrollY)
+		},
 	  selectEye(){
 		  this.shuffleArry = shuffle(this.shuffleArry)
 		//   this.Hisshuffle(this.shuffleArry)
@@ -119,10 +136,12 @@ export default {
 		  }
 	  },
 	  selectItem(item){
-		this.$router.push({
-          	path: `/seller/${item.id}`
-    	})
-		this.setSeller(item)
+		if(item.types === 'tx'){
+			this.$router.push({
+          		path: `/seller/${item.id}`
+    		})
+			this.setSeller(item)
+		}
 	  },
 	  ...mapMutations({
 		  setSeller: 'SET_SELLER'
@@ -148,7 +167,7 @@ export default {
 		background: linear-gradient(to top, #ffb857 0%,#ff5d70 00%)
 		.back
 			position:relative
-			left:6px
+			left:10px
 		.back .icon-back
 			font-size:20px;
 		.title
@@ -211,7 +230,7 @@ export default {
 					left:3%
 					background:#fff
 					border-radius:3px
-					box-shadow: 0 0px 3px 0 rgba(0,0,0,.14)
+					box-shadow: 0 5px 5px rgba(250,0,0,0.1)
 					display:flex
 					justify-content:center
 					.verfiy-code
@@ -307,21 +326,34 @@ export default {
 					position:absolute
 					right:14px
 					color:#2f8aff
+				.txnum,.xfnum,.kfnum
+					position:absolute
+					right:44px
+					color:#ff7108
 			.itemname >div 
 				font-weight:lighter
-				font-size:18px
+				font-size:16px
 			.itemtime
 				color:#b3b3b3
 				font-weight:lighter
 				display:flex
 				position:relative
+				.txitemtitle
+					position:absolute
+					right:25px
+					color:#2f8aff
+					.icon-right
+						position:relative
+						right:-10px
+						top:-20px
+						color:#666
 				.itemtitle
 					position:absolute
 					right:14px
 					color:#06c1ae
 			.itemtime >div 
 				// font-weight:lighter
-				font-size:14px
+				font-size:12px
 		.zdItem::after
 			content: " "
 			position: absolute
