@@ -6,7 +6,8 @@
 		</div>
 		<div class="sellerContain">
 			<scroll  @scroll="scroll"
-					 :listen-scroll="listenScroll"
+					 @scrollToEnd="loadMore"
+					 :pullup="pullup"
 					 ref="scroll" class="sellerContent" :data="zdList">
 				<div>
 					<div class="m-header">
@@ -58,6 +59,7 @@
 						</div>
 					</div>
 				</div>
+				 <loading v-show="hasMore" title=""></loading>
 				</div>	
 			</scroll>
 			<div class="foot">
@@ -71,6 +73,7 @@
 
 <script>
 import Scroll from 'base/scroll/scroll'
+import Loading from 'base/loading/loading'
 import {getValidateAccount,getConsumptionLogs} from 'api/seller'
 import {shuffle} from 'common/js/util'
 import {mapMutations} from 'vuex'
@@ -86,6 +89,8 @@ export default {
 		eyeClose:false,
 		shuffleArry:['富可敌国','腰缠万贯','富贵荣华','挥金如土','财大气粗','富贵逼人'],
 		scrollY: -1,
+		hasMore:true,
+		pullup: true
       }
     },
   created() {
@@ -111,11 +116,25 @@ export default {
 		}
 	  },
 	  _getConsumptionLogs(){
+		   this.hasMore = true
 		   getConsumptionLogs().then((res) => {
 			if(res.flag ==='1'){
 				this.zdList = res.data
+				this._checkMore(res.data)
 			}
         })
+	  },
+	  loadMore(){
+		   if (!this.hasMore) {
+          		return
+			}
+			 getConsumptionLogs().then((res) => {
+				if(res.flag ==='1'){
+					this.zdList = this.zdList.concat(res.data)
+					this._checkMore(res.data)
+				}
+        	})
+
 	  },
 		scroll(pos) {
 			// console.log(pos)
@@ -143,12 +162,20 @@ export default {
 			this.setSeller(item)
 		}
 	  },
+	  _checkMore(data){
+		const data2 = data
+		console.log(data2)
+        if (!data2.length) {
+          this.hasMore = false
+        }
+	  },
 	  ...mapMutations({
 		  setSeller: 'SET_SELLER'
 	  })
   },
   components: {
-      Scroll
+      Scroll,
+	  Loading
     }
 }
 </script>
@@ -183,7 +210,7 @@ export default {
 	.sellerContain
 		position:fixed
 		top:44px
-		bottom:0
+		bottom:50px
 		width:100%
 		.sellerContent
 			height:100%
@@ -309,7 +336,7 @@ export default {
 	.zdlist
 		padding-left:14px
 		flex-direction:column
-		padding-bottom: 50px
+		// padding-bottom: 50px
 		.zdItem
 			height:80px
 			position:relative
