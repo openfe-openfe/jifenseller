@@ -1,1 +1,3 @@
-export const SET_TEST = 'SET_TEST'
+export const SET_SELLER = 'SET_SELLER'
+
+export const SET_HISSHUFFLE = 'SET_HISSHUFFLE'

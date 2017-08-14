@@ -1,1 +1,3 @@
-export const test = state => state.test
+export const seller = state => state.seller
+
+export const Hisshuffle = state => state.Hisshuffle

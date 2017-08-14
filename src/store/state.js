@@ -1,5 +1,7 @@
+import {saveHis} from 'common/js/cache'
 const state={
-    test:{}
+    seller:{},
+    Hisshuffle:saveHis()
 }
 
 export default state

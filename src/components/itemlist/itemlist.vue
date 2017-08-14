@@ -10,11 +10,26 @@
     </transition>
 </template>
 <script>
+    import {mapGetters} from 'vuex'
     export default {
+        computed:{
+            id(){
+                return this.seller.id
+            },
+            ...mapGetters([
+                'seller'
+            ])
+        },
         methods:{
             back(){
                 this.$router.back()
+            },
+            _getId(){
+                console.log(this.seller.id)
             }
+        },
+        created(){
+            this._getId()
         }
     }
 </script>

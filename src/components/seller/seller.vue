@@ -62,6 +62,9 @@
 import Scroll from 'base/scroll/scroll'
 import {getValidateAccount,getConsumptionLogs} from 'api/seller'
 import {shuffle} from 'common/js/util'
+import {mapMutations} from 'vuex'
+// import {mapActions} from 'vuex'
+import storage from 'best-storage'
 export default {
   name:'Seller',
   data() {
@@ -76,6 +79,7 @@ export default {
   created() {
       this._getValidateAccount()
 	  this._getConsumptionLogs()
+	  this.checkOpen()
     },
   methods:{
 	//   获取商户中心
@@ -86,29 +90,43 @@ export default {
           }
         })
 	  },
+	  checkOpen(){
+		  if(storage.get('setHis',[]).length>0){
+			  this.eyeOpen = false
+			  this.eyeClose = true
+			  this.shuffleArry = storage.get('setHis')
+		}
+	  },
 	  _getConsumptionLogs(){
 		   getConsumptionLogs().then((res) => {
 			if(res.flag ==='1'){
 				this.zdList = res.data
-				// console.log(this.zdList)
 			}
         })
 	  },
+
 	  selectEye(){
 		  this.shuffleArry = shuffle(this.shuffleArry)
+		//   this.Hisshuffle(this.shuffleArry)
+		  storage.set('setHis',this.shuffleArry)
 		  if(this.eyeOpen){
 			  this.eyeOpen = false
 			  this.eyeClose = true
 		  }else{
 			  this.eyeOpen = true
 			  this.eyeClose = false
+			  storage.remove('setHis')
 		  }
 	  },
 	  selectItem(item){
-		   this.$router.push({
+		this.$router.push({
           	path: `/seller/${item.id}`
     	})
-	  }
+		this.setSeller(item)
+	  },
+	  ...mapMutations({
+		  setSeller: 'SET_SELLER'
+	  })
   },
   components: {
       Scroll

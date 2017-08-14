@@ -1,7 +1,10 @@
 import * as types from './mutation-types'
  const mutations={
-     [types.SET_TEST](state,test){
-        state.test = test
+     [types.SET_SELLER](state,seller){
+        state.seller = seller
+     },
+     [types.SET_HISSHUFFLE](state,Hisshuffle){
+        state.Hisshuffle = Hisshuffle
      }
  }
 
