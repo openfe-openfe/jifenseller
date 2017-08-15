@@ -63,8 +63,8 @@
 				</div>	
 			</scroll>
 			<div class="foot">
-				<div class="tixian">提现</div>
-				<div class="chongzhi">充值</div>
+				<div class="tixian" @click="selectTX()">提现</div>
+				<div class="chongzhi" @click="selectCZ()">充值</div>
 			</div>
 			<router-view></router-view>
 		</div>
@@ -161,6 +161,16 @@ export default {
     		})
 			this.setSeller(item)
 		}
+	  },
+	  selectTX(){
+		  this.$router.push({
+			  path:`/enchashment`
+		  })
+	  },
+	  selectCZ(){
+		  this.$router.push({
+			  path:`/recharge`
+		  })
 	  },
 	  _checkMore(data){
 		const data2 = data

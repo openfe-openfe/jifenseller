@@ -15,7 +15,6 @@
   }
 </script>
 <style scoped lang="stylus" rel="stylesheet/stylus">
-  // @import "~common/stylus/variable"
 
   .loading
     width: 100%
@@ -23,5 +22,5 @@
     .desc
       line-height: 20px
       font-size: 14px
-      color: #fff
+      color: #000
 </style>

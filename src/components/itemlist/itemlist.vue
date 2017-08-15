@@ -29,12 +29,34 @@
                                    2017/04/01 9:00
                                 </div>
                             </li>
-                            <li class="list">
-                                <div class="list-title2">
-                                    提现申请已提交,等待处理
+                            <li class="list" v-if="success">
+                                <div class="list-title-success">
+                                    提现成功
                                 </div>
-                                <div class="list-time2">
+                                <div class="list-time-success">
                                    2017/04/01 9:00
+                                </div>
+                                <span>
+                                    <i class="icon-money"></i>
+                                </span>
+                            </li>
+                            <li class="list list-error" v-if="error">
+                                <div class="list-title-error">
+                                    提现失败
+                                </div>
+                                <div class="list-time-error">
+                                  失败原因:XXXXXXXX
+                                </div>
+                                <span>
+                                    <i class="icon-money"></i>
+                                </span>
+                            </li>
+                            <li class="list list-check" v-if="check">
+                                <div class="list-title-check">
+                                    到账时间
+                                </div>
+                                <div class="list-time-check">
+                                  15个工作日内
                                 </div>
                                 <span>
                                     <i class="icon-money"></i>
@@ -50,6 +72,13 @@
 <script>
     import {mapGetters} from 'vuex'
     export default {
+        data(){
+            return {
+                success:false,
+                error:false,
+                check:true
+            }
+        },
         computed:{
             id(){
                 return this.seller.id
@@ -159,11 +188,29 @@
                             position:relative
                             top:-28px
                             font-size:14px
-                        .list-title2
+                        .list-title-success
                             color:#2f8aff
                             position:relative
                             top:50px
-                        .list-time2
+                        .list-time-success
+                            color:#666
+                            position:relative
+                            top:52px
+                            font-size:14px
+                        .list-title-error
+                            color:#ff5e70
+                            position:relative
+                            top:50px
+                        .list-time-error
+                            color:#666
+                            position:relative
+                            top:52px
+                            font-size:14px
+                        .list-title-check
+                            color:#666
+                            position:relative
+                            top:50px
+                        .list-time-check
                             color:#666
                             position:relative
                             top:52px
@@ -192,6 +239,24 @@
                                 border-radius:50%
                                 display:inline-block
                                 font-weight:bold
+                    .list-error
+                        span
+                            .icon-money
+                                color:#ff5e70
+                                font-size:28px
+                                // background:#fff
+                                border-radius:50%
+                                display:inline-block
+                                font-weight:bold
+                    .list-check
+                        span
+                            .icon-money
+                                color:#999
+                                font-size:28px
+                                // background:#fff
+                                border-radius:50%
+                                display:inline-block
+                                font-weight:bold
                     .list::after
                         content: " "
                         position: absolute
@@ -201,6 +266,17 @@
                         height: 100%
                         border-right: 3px solid #2f8aff
                         color: #2f8aff
+                        transform-origin: 100% 0
+                        transform: scaleX(.5)
+                    .list-check::after
+                        content: " "
+                        position: absolute
+                        left: 10px
+                        top: 0;
+                        width: 1px
+                        height: 100%
+                        border-right: 3px solid #999
+                        color: #999
                         transform-origin: 100% 0
                         transform: scaleX(.5)
 
