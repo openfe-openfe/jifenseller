@@ -29,6 +29,10 @@
         type: Boolean,
         default: false
       },
+      pulldown :{
+        type: Boolean,
+        default: false
+      },
       beforeScroll: {
         type: Boolean,
         default: false
@@ -64,12 +68,19 @@
 
         if (this.pullup) {
           this.scroll.on('scrollEnd', () => {
-            if (this.scroll.y <= (this.scroll.maxScrollY + 40)) {
+            if (this.scroll.y <= (this.scroll.maxScrollY+40)) {
               this.$emit('scrollToEnd')
             }
           })
         }
-
+        if (this.pulldown){
+          this.scroll.on('touchend',(pos) => {
+            // console.log(pos)
+            if(pos > 50){
+              this.$emit('pulldown')
+            }
+          })
+        }
         if (this.beforeScroll) {
           this.scroll.on('beforeScrollStart', () => {
             this.$emit('beforeScroll')

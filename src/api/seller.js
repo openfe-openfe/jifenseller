@@ -32,3 +32,19 @@ export function getConsumptionLogs() {
     return Promise.resolve(res.data)
   })
 }
+
+export function getRecord() {
+  const url = 'http://rapapi.org/mockjsdata/13543/api/record'
+
+  const data = {
+    sid:'test',
+    seller_wv:'test',
+    token:'test'
+  }
+
+  return axios.post(url, {
+    params: data
+  }).then((res) => {
+    return Promise.resolve(res.data)
+  })
+}

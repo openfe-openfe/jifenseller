@@ -1,13 +1,19 @@
 <template>
     <div class="seller">
-		<div class="header">
-				<div class="back"><i class="icon-back"></i>返回</div>
-				<h1 class="title">{{ValidateAccount.seller_name}}</h1>
+		<div class="header" v-if="scrollY > -100">
+			<div class="back"><i class="icon-back"></i>返回</div>
+			<h1 class="title">{{ValidateAccount.seller_name}}</h1>
+		</div>
+		<div class="headerW" v-if="scrollY < -100">
+			<div class="back"><i class="icon-back"></i>返回</div>
+			<h1 class="title">{{ValidateAccount.seller_name}}</h1>
 		</div>
 		<div class="sellerContain">
 			<scroll  @scroll="scroll"
+					 :listenScroll="listenScroll"
 					 @scrollToEnd="loadMore"
 					 :pullup="pullup"
+					 :probeType="3"
 					 ref="scroll" class="sellerContent" :data="zdList">
 				<div>
 					<div class="m-header">
@@ -23,8 +29,8 @@
 						<i class="icon-hua"></i></div>
 					</div>
 					<div class="verfiy">
-						<div class="verfiy-code"><i class="icon-code"></i>扫码核销</div>
-						<div class="verfiy-jl"><i class="icon-jl"></i>验证记录</div>
+						<div @click="selectHX()" class="verfiy-code"><i class="icon-code"></i>扫码核销</div>
+						<div @click="selectJL()" class="verfiy-jl"><i class="icon-jl"></i>验证记录</div>
 					</div>
 				</div>
 				<div class="m-zc">
@@ -77,7 +83,7 @@ import Loading from 'base/loading/loading'
 import {getValidateAccount,getConsumptionLogs} from 'api/seller'
 import {shuffle} from 'common/js/util'
 import {mapMutations} from 'vuex'
-// import {mapActions} from 'vuex'
+import {Base64} from 'js-base64'
 import storage from 'best-storage'
 export default {
   name:'Seller',
@@ -90,7 +96,8 @@ export default {
 		shuffleArry:['富可敌国','腰缠万贯','富贵荣华','挥金如土','财大气粗','富贵逼人'],
 		scrollY: -1,
 		hasMore:true,
-		pullup: true
+		pullup: true,
+		listenScroll:true
       }
     },
   created() {
@@ -98,6 +105,11 @@ export default {
       this._getValidateAccount()
 	  this._getConsumptionLogs()
 	  this.checkOpen()
+    },
+     mounted(){
+		var bs64str='e2lkOicxMjMnfQ=='
+		bs64str = Base64.decode(bs64str)
+		console.log(bs64str)
     },
   methods:{
 	//   获取商户中心
@@ -136,11 +148,12 @@ export default {
         	})
 
 	  },
-		scroll(pos) {
-			// console.log(pos)
-			this.scrollY = pos.y
-			console.log(this.scrollY)
-		},
+	scroll(pos) {
+		// console.log(pos)
+		this.scrollY = pos.y
+		// console.log(this.scrollY)
+
+	},
 	  selectEye(){
 		  this.shuffleArry = shuffle(this.shuffleArry)
 		//   this.Hisshuffle(this.shuffleArry)
@@ -172,9 +185,19 @@ export default {
 			  path:`/recharge`
 		  })
 	  },
+	   selectHX(){
+		  this.$router.push({
+			  path:`/verification`
+		  })
+	  },
+	  selectJL(){
+		  this.$router.push({
+			  path:`/record`
+		  })
+	  },
 	  _checkMore(data){
 		const data2 = data
-		console.log(data2)
+		// console.log(data2)
         if (!data2.length) {
           this.hasMore = false
         }
@@ -217,6 +240,30 @@ export default {
 			text-align: center
 			font-size: 18px
 			line-height:44px
+	.headerW
+		display:flex
+		height:44px
+		width:100%
+		align-items:center
+		color:#000
+		font-size:16px
+		position:relative
+		background:#fff
+		.back
+			position:relative
+			left:10px
+		.back .icon-back
+			font-size:20px;
+		.title
+			position: absolute
+			left: 20%
+			width: 60%
+			text-overflow: ellipsis
+			overflow: hidden
+			white-space: nowrap
+			text-align: center
+			font-size: 18px
+			line-height:44px
 	.sellerContain
 		position:fixed
 		top:44px
@@ -237,17 +284,19 @@ export default {
 					flex-direction:column
 					align-items:center
 					position:relative
-					top:30px
+					top:20px
 					.keyong
 						margin-top:15px
 						color:#fff6be
 						font-size:16px
 						letter-spacing:2px
+						text-shadow: 3px 2px 2px #e25d4d
 					.eye
 						width:30px
 						height:30px
 						position:absolute
 						right:20px
+						top:13px
 						text-align:center
 						line-height:30px
 						.icon-eye ,.icon-eyeclose
@@ -259,6 +308,9 @@ export default {
 						color:#fff6be
 						font-size:30px
 						letter-spacing:3px
+						span
+							font-weight:500
+							text-shadow: 3px 2px 2px #e25d4d
 				.verfiy
 					height:70px
 					width:94%

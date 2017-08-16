@@ -27,6 +27,18 @@ const Recharge = (resolve) => {
   })
 }
 
+const Verification = (resolve) => {
+  import('components/verification/verification').then((module) => {
+    resolve(module)
+  })
+}
+
+const Record = (resolve) => {
+  import('components/record/record').then((module) => {
+    resolve(module)
+  })
+}
+
 
 export default new Router({
   routes: [
@@ -51,6 +63,14 @@ export default new Router({
     {
       path: '/recharge',
       component: Recharge
+    },
+    {
+      path: '/verification',
+      component: Verification
+    },
+    {
+      path: '/record',
+      component: Record
     }
   ]
 })
