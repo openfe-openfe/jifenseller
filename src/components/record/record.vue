@@ -38,6 +38,7 @@
 import Scroll from 'base/scroll/scroll'
 import Loading from 'base/loading/loading'
 import {getRecord} from 'api/seller'
+import storage from 'best-storage'
 export default {
         data(){
             return {
@@ -57,8 +58,8 @@ export default {
                 this.$router.back()
             },
             _getRecrod(){
-                const sid='52'
-                const user_account='54057460'
+                const sid=storage.get('sid')
+                const user_account=storage.get('user_account')
                 getRecord(sid,user_account).then((res)=>{
                     if(res.flag === '1'){
                         this.record = res.data || []

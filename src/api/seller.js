@@ -78,10 +78,10 @@ export function getRecord(sid,user_account) {
 
 /*获取账单详情 */
 
-export function getTixiandetail(id) {
+export function getTixiandetail(sid,id) {
   const url = api.base + '/api.php/home/Tixian/tixianDetail'
   const data = {
-    sid:'52',
+    sid:sid,
     id:id
   }
 
@@ -104,6 +104,46 @@ export function getApply(token,seller_id,amount,user_account) {
     seller_id:seller_id,
     amount:amount,
     user_account:user_account
+  }
+
+  return axios.post(url, obj2params(paramsPrefilter(data)),{
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    }
+  }).then((res) => {
+    return Promise.resolve(res.data)
+  })
+}
+
+/*取消提现 */
+
+export function getCancel(token,seller_id,tixian_id,user_account) {
+  const url = api.base + '/api.php/Home/Tixian/cancel'
+  const data = {
+    token:token,
+    seller_id:seller_id,
+    user_account:user_account,
+    tixian_id:tixian_id
+  }
+
+  return axios.post(url, obj2params(paramsPrefilter(data)),{
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    }
+  }).then((res) => {
+    return Promise.resolve(res.data)
+  })
+}
+
+/*充值接口 */
+
+export function getPay(token,seller_id,amount,user_account) {
+  const url = 'http://con.icloudcity.cn/jifen/dev/api.php/Wxpay/Wp/pay'
+  const data = {
+    token:token,
+    seller_id:seller_id,
+    user_account:user_account,
+    amount:amount
   }
 
   return axios.post(url, obj2params(paramsPrefilter(data)),{

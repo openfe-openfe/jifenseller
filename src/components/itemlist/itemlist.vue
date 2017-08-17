@@ -51,6 +51,17 @@
                                     <i class="icon-money"></i>
                                 </span>
                             </li>
+                            <li class="list list-check" v-if="Txdata.status == 3">
+                                <div class="list-title-check">
+                                    {{Txdata.title_1}}
+                                </div>
+                                <div class="list-time-check">
+                                  {{Txdata.title_2}}
+                                </div>
+                                <span>
+                                    <i class="icon-money"></i>
+                                </span>
+                            </li>
                             <li class="list list-check" v-if="Txdata.status == 0">
                                 <div class="list-title-check">
                                     {{Txdata.title_1}}
@@ -67,7 +78,7 @@
                 </div>
 
                 <div class="button" v-if="Txdata.status == 0">
-                    <button class="canel">取消提现</button>
+                    <button class="canel" @click="canel()">取消提现</button>
                 </div>
             </div>
         </div>
@@ -75,7 +86,8 @@
 </template>
 <script>
     import {mapGetters} from 'vuex'
-    import {getTixiandetail} from 'api/seller'
+    import {getTixiandetail,getCancel} from 'api/seller'
+    import storage from 'best-storage'
     export default {
         data(){
             return {
@@ -98,11 +110,28 @@
                 console.log(this.seller.id)
             },
             _getTixiandetail(){
-                getTixiandetail(this.seller.id).then((res)=>{
+                const sid = storage.get('sid')
+                getTixiandetail(sid,this.seller.id).then((res)=>{
                     if(res.flag ==='1'){
                         this.Txdata=res.data
                     }
                 })
+            },
+            canel(){
+                const tixian_id=this.seller.id
+                const user_account=storage.get('user_account')
+                const seller_id = storage.get('seller_id')
+                const token =storage.get('token')
+                
+                getCancel(token,seller_id,tixian_id,user_account).then((res)=>{
+                    if(res.flag === '1'){
+                        //取消提现成功
+                        this.$router.push({
+          		            path: `/seller`
+    		            })
+                    }
+                })
+                
             }
         },
         created(){

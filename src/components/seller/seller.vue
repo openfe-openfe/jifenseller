@@ -94,7 +94,7 @@ export default {
 		zdList: [],
 		eyeOpen:true,
 		eyeClose:false,
-		shuffleArry:['富可敌国','腰缠万贯','富贵荣华','挥金如土','财大气粗','富贵逼人'],
+		shuffleArry:['富可敌国','腰缠万贯','富贵荣华','挥金如土','财大气粗'],
 		scrollY: -1,
 		hasMore:true,
 		pullup: true,
@@ -111,16 +111,26 @@ export default {
 	  this.checkOpen()
     },
      mounted(){
-		var bs64str='e2lkOicxMjMnfQ=='
-		bs64str = Base64.decode(bs64str)
-		console.log(bs64str)
+		// var bs64str='e2lkOicxMjMnfQ=='
+		// bs64str = Base64.decode(bs64str)
+		// console.log(bs64str)
+		window.scanCallback=function(data){
+			alert(data)
+		}
     },
   methods:{
 	//   获取商户中心
 	  _getValidateAccount(){
 		  	const sid='52'
 			const seller_wv='54057460'
+			const user_account='54057460'
 			const token='B26711E76E9CADC91EDAE1F949828BEA'
+			// 本地存储相关
+			storage.set('sid',sid)
+			storage.set('seller_id',sid)
+			storage.set('seller_wv',seller_wv)
+			storage.set('user_account',user_account)
+			storage.set('token',token)
 		  getValidateAccount(sid,seller_wv,token).then((res) => {
 			if (res.flag === '1') {
             this.ValidateAccount = res.data
@@ -137,7 +147,7 @@ export default {
 	  _getConsumptionLogs(){
 		   	this.page = 1
         	this.hasMore = true
-			const sid = '52'
+			const sid = storage.get('sid')
 		   getConsumptionLogs(sid,this.page).then((res) => {
 			if(res.flag ==='1'){
 				this.zdList = res.data
@@ -151,7 +161,7 @@ export default {
 		   if (!this.hasMore) {
           		return
 			}
-			const sid = '52'
+			const sid = storage.get('sid')
 			this.page++
 			this.count2++
 			 getConsumptionLogs(sid,this.page).then((res) => {
@@ -183,6 +193,7 @@ export default {
 	  },
 	  selectItem(item){
 		if(item.types === 'tx'){
+			console.log(item.id)
 			this.$router.push({
           		path: `/seller/${item.id}`
     		})
@@ -200,9 +211,14 @@ export default {
 		  })
 	  },
 	   selectHX(){
-		  this.$router.push({
-			  path:`/verification`
-		  })
+		//   this.$router.push({
+		// 	  path:`/verification`
+		//   })
+		try{
+			WVJsFunction.scan('scanCallback')
+		}catch(e){
+			console.log('出错了')
+		}
 	  },
 	  selectJL(){
 		  this.$router.push({

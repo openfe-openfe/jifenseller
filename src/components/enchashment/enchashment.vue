@@ -21,8 +21,10 @@
     </transition>
 </template>
 <script>
+import {mapMutations} from 'vuex'
 import {getApply} from 'api/seller'
 import {getValidateAccount} from 'api/seller'
+import storage from 'best-storage'
     export default {
         props: {
             placeholder: {
@@ -44,9 +46,9 @@ import {getValidateAccount} from 'api/seller'
                 this.$router.back()
             },
              _getValidateAccount(){
-                 	const sid='52'
-                    const seller_wv='54057460'
-                    const token='B26711E76E9CADC91EDAE1F949828BEA'
+                 	const sid=storage.get('sid')
+                    const seller_wv=storage.get('seller_wv')
+                    const token=storage.get('token')
                 getValidateAccount(sid,seller_wv,token).then((res) => {
                     if (res.flag === '1') {
                         this.ValidateAccount = res.data
@@ -55,18 +57,25 @@ import {getValidateAccount} from 'api/seller'
 	        },
             submit(){
             //    console.log(this.$refs.query.value)
-                    const token='B26711E76E9CADC91EDAE1F949828BEA'
-                    const seller_id='52'
+                    const seller_id=storage.get('sid')
+                    const token=storage.get('token')
                     const amount=this.$refs.query.value
-                    const user_account='54057460'
+                    const user_account=storage.get('user_account')
                     getApply(token,seller_id,amount,user_account).then((res)=>{
                         if(res.flag === '1'){
                             // 提现成功，进入提现详情页面
-
+                            this.$router.push({
+          		                path: `/seller/${res.data.id}`
+    		                })
+			                this.setSeller(res.data)
                         }
                     })
-            }
+            },
+             ...mapMutations({
+		        setSeller: 'SET_SELLER'
+	        })
         },
+
     }
 </script>
 <style scoped lang="stylus" rel="stylesheet/stylus">

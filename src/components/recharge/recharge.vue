@@ -8,18 +8,19 @@
              <div class="czmony">
                     <div class="czmonyContain">
                         <div class="title">账户余额</div>
-                        <div class="mony">123123元</div>
+                        <div class="mony">{{ValidateAccount.keyongyue}}元</div>
                     </div>
-                    <div class="czname">潍坊城市云</div>
+                    <div class="czname">{{ValidateAccount.seller_name}}</div>
             </div>
              <div class="czInput">
-                <input ref="query" class="box" :placeholder="placeholder" v-model="num"/>
+                <input ref="query" v-model="query" class="box" :placeholder="placeholder"/>
              </div>
              <div class="title2">
                 <p>我已阅读并同意<span>《潍V用户协议》</span></p>
              </div>
              <div class="button">
-                <button>立即充值</button>
+                <button @click="pay()" v-if="disabled==false">立即充值</button>
+                <button class="disa" v-if="disabled==true" disabled="disabled">立即充值</button>
              </div>
              <div class="shuoming">
                 <p>注意:</p>
@@ -30,6 +31,8 @@
     </transition>
 </template>
 <script>
+import storage from 'best-storage'
+import {getValidateAccount,getPay} from 'api/seller'
     export default {
         props: {
             placeholder: {
@@ -37,9 +40,50 @@
                 default: '￥充值金额'
             }
         },
+        data(){
+            return {
+                ValidateAccount:[],
+                query: '',
+                disabled:true
+            }
+        },
+        created(){
+            this._getValidateAccount()
+            this.$watch('query', (newQuery) => {
+                 // 监听query值的变化
+                 if(newQuery >0){
+                     this.disabled=false
+                 }else{
+                     this.disabled=true
+                 }
+            })
+        },
         methods:{
             back(){
                 this.$router.back()
+            },
+             _getValidateAccount(){
+                 console.log(123)
+                    const sid=storage.get('sid')
+                    const seller_wv=storage.get('seller_wv')
+                    const token=storage.get('token')
+                    getValidateAccount(sid,seller_wv,token).then((res) => {
+                        if (res.flag === '1') {
+                        this.ValidateAccount = res.data
+                        }
+                    })
+	        },
+            pay(){
+                const seller_id=storage.get('seller_id')
+                const user_account=storage.get('user_account')
+                const token=storage.get('token')
+                const amount=this.$refs.query.value
+                getPay(token,seller_id,amount,user_account).then((res)=>{
+                    if(res.flag === '1'){
+                        // 跳转微信支付
+                        window.location.href=res.data
+                    }
+                })
             },
         },
     }
@@ -142,6 +186,15 @@
             button
                 width:100%
                 background: #ff7108
+                text-align:center
+                height:50px
+                margin:0 auto
+                border-radius:3px
+                color:#fff
+                box-shadow: 0 3px 3px rgba(250,0,0,0.1)
+            .disa
+                width:100%
+                background: #999
                 text-align:center
                 height:50px
                 margin:0 auto
