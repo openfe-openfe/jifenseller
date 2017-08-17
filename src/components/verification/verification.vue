@@ -12,7 +12,7 @@
                         <div class="goods-name">商品:红牛一听装</div>
                         <div class="goods-price">价格:0.01元 <span class="jifen">10积分</span></div>
                     </div>
-                    <div class="goods-back"><i class="icon-right"></i></div>
+                    <div class="goods-back" @click="showConfirm"><i class="icon-right"></i></div>
              </div>
              <div class="dh-list">
                 <div class="dingdan">
@@ -33,11 +33,13 @@
                 <button>确认核销</button>
                 <button class="canel">取消</button>
              </div>
+              <confirm ref="confirm" text="是否清空所有搜索历史" confirmBtnText="清空"></confirm>
         </div>
     </transition>
 </template>
 
 <script>
+  import Confirm from 'base/confirm/confirm'
     export default {
         props: {
             placeholder: {
@@ -49,7 +51,13 @@
             back(){
                 this.$router.back()
             },
+            showConfirm(){
+                this.$refs.confirm.show()
+            }
         },
+        components: {
+            Confirm,
+        }
     }
 </script>
 

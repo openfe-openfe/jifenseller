@@ -1,49 +1,115 @@
 import axios from 'axios'
 
-export function getValidateAccount() {
-  const url = 'http://rapapi.org/mockjsdata/13543/api/validate_account'
+const api ={
+  base:'http://192.168.1.111/jifen'
+}
+
+// 将对象拼接成 key1=val1&key2=val2&key3=val3 的字符串形式
+function obj2params(obj) {
+  let result = '';
+  for (let item in obj) {
+      result += '&' + item + '=' + encodeURIComponent(obj[item]);
+  }
+  if (result) {
+      //console.log(result)
+      result = result.slice(1);
+  }
+  return result;
+}
+
+function paramsPrefilter(params) {
+// params = Object.assign(params, {display: 'json'})
+// params['display'] = 'json'
+return params;
+}
+
+/* 获取商户中心 */
+export function getValidateAccount(sid,seller_wv,token) {
+  const url = api.base + '/api.php/home/seller/validate_account'
 
   const data = {
-    sid:'test',
-    seller_wv:'test',
-    token:'test'
+    sid:sid,
+    seller_wv:seller_wv,
+    token:token
+  }
+  return axios.post(url, obj2params(paramsPrefilter(data)),{
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    }
+  }).then((res) => {
+    return Promise.resolve(res.data)
+  })
+}
+
+/*获取账单列表 */
+export function getConsumptionLogs(sid,page) {
+  const url = api.base + '/api.php/home/PayManage/consumptionLogs'
+
+  const data = {
+    sid:sid,
+    p:page,
+  }
+  return axios.post(url, obj2params(paramsPrefilter(data)),{
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    }
+  }).then((res) => {
+    return Promise.resolve(res.data)
+  })
+}
+
+/* 验证记录接口 */
+export function getRecord(sid,user_account) {
+  const url = api.base + '/api.php/home/seller/getValidateLog'
+
+  const data = {
+    sid:sid,
+    user_account:user_account
   }
 
-  return axios.post(url, {
-    params: data
+  return axios.post(url, obj2params(paramsPrefilter(data)),{
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    }
+  }).then((res) => {
+    return Promise.resolve(res.data)
+  })
+}
+
+/*获取账单详情 */
+
+export function getTixiandetail(id) {
+  const url = api.base + '/api.php/home/Tixian/tixianDetail'
+  const data = {
+    sid:'52',
+    id:id
+  }
+
+  return axios.post(url, obj2params(paramsPrefilter(data)),{
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    }
   }).then((res) => {
     return Promise.resolve(res.data)
   })
 }
 
 
-export function getConsumptionLogs() {
-  const url = 'http://rapapi.org/mockjsdata/13543/api/consumptionLogs'
+/*提现接口 */
 
+export function getApply(token,seller_id,amount,user_account) {
+  const url = api.base + '/api.php/Home/Tixian/apply'
   const data = {
-    sid:'test',
-    seller_wv:'test',
-    token:'test'
+    token:token,
+    seller_id:seller_id,
+    amount:amount,
+    user_account:user_account
   }
 
-  return axios.post(url, {
-    params: data
-  }).then((res) => {
-    return Promise.resolve(res.data)
-  })
-}
-
-export function getRecord() {
-  const url = 'http://rapapi.org/mockjsdata/13543/api/record'
-
-  const data = {
-    sid:'test',
-    seller_wv:'test',
-    token:'test'
-  }
-
-  return axios.post(url, {
-    params: data
+  return axios.post(url, obj2params(paramsPrefilter(data)),{
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    }
   }).then((res) => {
     return Promise.resolve(res.data)
   })

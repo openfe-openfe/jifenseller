@@ -10,9 +10,9 @@
                 <div class="txmony">
                     <div class="txmonyContain">
                         <div class="title">提现金额</div>
-                        <div class="mony">238493元</div>
+                        <div class="mony">{{Txdata.amount}}元</div>
                     </div>
-                    <div class="txtime">2017/04/01 9:00</div>
+                    <div class="txtime">{{Txdata.time}}</div>
                 </div>
                 <div class="bar"></div>
                 <div class="txprogress">
@@ -26,37 +26,37 @@
                                     提现申请已提交,等待处理
                                 </div>
                                 <div class="list-time">
-                                   2017/04/01 9:00
+                                   {{Txdata.time}}
                                 </div>
                             </li>
-                            <li class="list" v-if="success">
+                            <li class="list" v-if="Txdata.status == 1">
                                 <div class="list-title-success">
                                     提现成功
                                 </div>
                                 <div class="list-time-success">
-                                   2017/04/01 9:00
+                                   {{Txdata.time}}
                                 </div>
                                 <span>
                                     <i class="icon-money"></i>
                                 </span>
                             </li>
-                            <li class="list list-error" v-if="error">
+                            <li class="list list-error" v-if="Txdata.status == 2">
                                 <div class="list-title-error">
-                                    提现失败
+                                    {{Txdata.title_1}}
                                 </div>
                                 <div class="list-time-error">
-                                  失败原因:XXXXXXXX
+                                  {{Txdata.title_2}}
                                 </div>
                                 <span>
                                     <i class="icon-money"></i>
                                 </span>
                             </li>
-                            <li class="list list-check" v-if="check">
+                            <li class="list list-check" v-if="Txdata.status == 0">
                                 <div class="list-title-check">
-                                    到账时间
+                                    {{Txdata.title_1}}
                                 </div>
                                 <div class="list-time-check">
-                                  15个工作日内
+                                  {{Txdata.title_2}}
                                 </div>
                                 <span>
                                     <i class="icon-money"></i>
@@ -65,24 +65,27 @@
                         </ul>
                     </div>
                 </div>
+
+                <div class="button" v-if="Txdata.status == 0">
+                    <button class="canel">取消提现</button>
+                </div>
             </div>
         </div>
     </transition>
 </template>
 <script>
     import {mapGetters} from 'vuex'
+    import {getTixiandetail} from 'api/seller'
     export default {
         data(){
             return {
                 success:false,
                 error:false,
-                check:true
+                check:true,
+                Txdata:'',
             }
         },
         computed:{
-            id(){
-                return this.seller.id
-            },
             ...mapGetters([
                 'seller'
             ])
@@ -93,10 +96,19 @@
             },
             _getId(){
                 console.log(this.seller.id)
+            },
+            _getTixiandetail(){
+                getTixiandetail(this.seller.id).then((res)=>{
+                    if(res.flag ==='1'){
+                        this.Txdata=res.data
+                    }
+                })
             }
         },
         created(){
             this._getId()
+            this._getTixiandetail()
+
         }
     }
 </script>
@@ -279,5 +291,23 @@
                         color: #999
                         transform-origin: 100% 0
                         transform: scaleX(.5)
-
+            .button
+                text-align:center
+                margin-top:60px
+                margin-bottom:30px
+                padding-left:10px
+                padding-right:10px
+                button
+                    width:100%
+                    background: #ff7108
+                    text-align:center
+                    height:50px
+                    margin:0 auto
+                    border-radius:3px
+                    color:#fff
+                    box-shadow: 0 3px 3px rgba(250,0,0,0.1)
+                .canel
+                    background: #c2c2c2
+                    margin-top:20px
+                    box-shadow: 0 1px 3px 0 rgba(0,0,0,.14)
 </style>

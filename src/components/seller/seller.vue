@@ -64,9 +64,10 @@
 							<div class="itemtitle" v-if="item.types == 'cz'" >{{item.status}}</div>
 						</div>
 					</div>
+					<loading v-show="hasMore" title=""></loading>
 				</div>
-				 <loading v-show="hasMore" title=""></loading>
-				</div>	
+				
+				</div>
 			</scroll>
 			<div class="foot">
 				<div class="tixian" @click="selectTX()">提现</div>
@@ -97,7 +98,10 @@ export default {
 		scrollY: -1,
 		hasMore:true,
 		pullup: true,
-		listenScroll:true
+		listenScroll:true,
+		page:1,
+		count:1,
+		count2:1
       }
     },
   created() {
@@ -114,7 +118,10 @@ export default {
   methods:{
 	//   获取商户中心
 	  _getValidateAccount(){
-		  getValidateAccount().then((res) => {
+		  	const sid='52'
+			const seller_wv='54057460'
+			const token='B26711E76E9CADC91EDAE1F949828BEA'
+		  getValidateAccount(sid,seller_wv,token).then((res) => {
 			if (res.flag === '1') {
             this.ValidateAccount = res.data
           }
@@ -128,10 +135,14 @@ export default {
 		}
 	  },
 	  _getConsumptionLogs(){
-		   this.hasMore = true
-		   getConsumptionLogs().then((res) => {
+		   	this.page = 1
+        	this.hasMore = true
+			const sid = '52'
+		   getConsumptionLogs(sid,this.page).then((res) => {
 			if(res.flag ==='1'){
 				this.zdList = res.data
+				this.count=res.page.count
+				// console.log(this.count)
 				this._checkMore(res.data)
 			}
         })
@@ -140,10 +151,13 @@ export default {
 		   if (!this.hasMore) {
           		return
 			}
-			 getConsumptionLogs().then((res) => {
+			const sid = '52'
+			this.page++
+			this.count2++
+			 getConsumptionLogs(sid,this.page).then((res) => {
 				if(res.flag ==='1'){
 					this.zdList = this.zdList.concat(res.data)
-					this._checkMore(res.data)
+					this._checkMore(res.data,this.count2)
 				}
         	})
 
@@ -195,10 +209,10 @@ export default {
 			  path:`/record`
 		  })
 	  },
-	  _checkMore(data){
+	  _checkMore(data,count){
 		const data2 = data
 		// console.log(data2)
-        if (!data2.length) {
+        if (count >= this.count || !data2.length) {
           this.hasMore = false
         }
 	  },
@@ -267,7 +281,7 @@ export default {
 	.sellerContain
 		position:fixed
 		top:44px
-		bottom:50px
+		bottom:0px
 		width:100%
 		.sellerContent
 			height:100%
@@ -398,7 +412,7 @@ export default {
 	.zdlist
 		padding-left:14px
 		flex-direction:column
-		// padding-bottom: 50px
+		padding-bottom: 50px
 		.zdItem
 			height:80px
 			position:relative

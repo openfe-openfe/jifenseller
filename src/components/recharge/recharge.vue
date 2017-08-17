@@ -13,7 +13,7 @@
                     <div class="czname">潍坊城市云</div>
             </div>
              <div class="czInput">
-                <input ref="query" class="box" :placeholder="placeholder" type="number"/>
+                <input ref="query" class="box" :placeholder="placeholder" v-model="num"/>
              </div>
              <div class="title2">
                 <p>我已阅读并同意<span>《潍V用户协议》</span></p>

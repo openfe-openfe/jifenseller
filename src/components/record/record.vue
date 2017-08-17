@@ -10,24 +10,24 @@
                 ref="scroll"
                 @scrollToEnd="loadMore"
                 :pullup="pullup"
-                 :data="record">
+                :data="record">
                     <div>
                         <div class="record-item" v-for="item in record">
-                            <div class="item-name">{{item.name}}</div>
+                            <div class="item-name">{{item.goodsname}}</div>
                             <div class="item-quanhao">
                                 <div class="quanhao-num">券号:</div>
                                 <div class="quanhao-code">{{item.code}}</div>
                             </div>
                             <div class="item-dingdan">
                                 <div class="dingdan-num">订单号:</div>
-                                <div class="dingdan-code">JHHHHH</div>
+                                <div class="dingdan-code">{{item.orderno}}</div>
                             </div>
                             <div class="item-time">
                                 <div class="time-num">验证时间:</div>
-                                <div class="quatimenhao-code">{{item.time}}</div>
+                                <div class="quatimenhao-code">{{item.validate_time}}</div>
                             </div>
                         </div>
-                         <loading v-show="hasMore" title=""></loading>
+                        <loading v-show="hasMore" title=""></loading>
                     </div>
                 </scroll>
              </div>
@@ -57,9 +57,11 @@ export default {
                 this.$router.back()
             },
             _getRecrod(){
-                getRecord().then((res)=>{
+                const sid='52'
+                const user_account='54057460'
+                getRecord(sid,user_account).then((res)=>{
                     if(res.flag === '1'){
-                        this.record = res.data
+                        this.record = res.data || []
                         // console.log(this.record)
                         this._checkMore(res.data)
                     }
@@ -78,6 +80,7 @@ export default {
 	  },
             _checkMore(data){
                 const data2 = data
+                // console.log(data2.length)
                 if(!data2.length){
                     this.hasMore = false
                 }

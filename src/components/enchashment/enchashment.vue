@@ -6,11 +6,11 @@
 				<h1 class="title">提现</h1>
 		     </div>
              <div class="txInput">
-                <input ref="query" class="box" :placeholder="placeholder" type="number"/>
+                <input ref="query" v-model="query" class="box" :placeholder="placeholder" type="number"/>
              </div>
-             <div class="title2">可提现账户余额:12313元,当前账户余额:123123元</div>
+             <div class="title2">可提现账户余额:{{ValidateAccount.keyongyue}}元,当前账户余额:{{ValidateAccount.zongjine}}元</div>
              <div class="button">
-                <button>提交</button>
+                <button @click="submit()">提交</button>
              </div>
              <div class="shuoming">
                 <p>注意:</p>
@@ -21,6 +21,8 @@
     </transition>
 </template>
 <script>
+import {getApply} from 'api/seller'
+import {getValidateAccount} from 'api/seller'
     export default {
         props: {
             placeholder: {
@@ -28,10 +30,42 @@
                 default: '￥请输入提现金额'
             }
         },
+         data() {
+            return {
+                query: '',
+                ValidateAccount:[]
+            }
+         },
+         created(){
+             this._getValidateAccount()
+         },
         methods:{
             back(){
                 this.$router.back()
             },
+             _getValidateAccount(){
+                 	const sid='52'
+                    const seller_wv='54057460'
+                    const token='B26711E76E9CADC91EDAE1F949828BEA'
+                getValidateAccount(sid,seller_wv,token).then((res) => {
+                    if (res.flag === '1') {
+                        this.ValidateAccount = res.data
+                    }
+                })
+	        },
+            submit(){
+            //    console.log(this.$refs.query.value)
+                    const token='B26711E76E9CADC91EDAE1F949828BEA'
+                    const seller_id='52'
+                    const amount=this.$refs.query.value
+                    const user_account='54057460'
+                    getApply(token,seller_id,amount,user_account).then((res)=>{
+                        if(res.flag === '1'){
+                            // 提现成功，进入提现详情页面
+
+                        }
+                    })
+            }
         },
     }
 </script>
