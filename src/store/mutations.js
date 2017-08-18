@@ -5,6 +5,9 @@ import * as types from './mutation-types'
      },
      [types.SET_HISSHUFFLE](state,Hisshuffle){
         state.Hisshuffle = Hisshuffle
+     },
+     [types.SET_VERFIY](state,verfiy){
+        state.verfiy = verfiy
      }
  }
 

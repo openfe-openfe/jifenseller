@@ -5,32 +5,32 @@
 				<div class="back" @click="back()"><i class="icon-back"></i>返回</div>
 				<h1 class="title">扫码核销</h1>
 		     </div>
-             <h2>可核销</h2>
+             <h2>{{codeData.tips}}</h2>
              <div class="goods">
-                    <img src="https://ss0.bdstatic.com/-0U0bnSm1A5BphGlnYG/tam-ogel/b80a043c57da31ca37f99c22b53511e3_121_121.jpg"/>
+                    <img :src="codeData.logo"/>
                     <div class="goods-content">
-                        <div class="goods-name">商品:红牛一听装</div>
-                        <div class="goods-price">价格:0.01元 <span class="jifen">10积分</span></div>
+                        <div class="goods-name">商品:{{codeData.name}}</div>
+                        <div class="goods-price">价格:{{codeData.price}}元 <span class="jifen">{{codeData.jifen}}积分</span></div>
                     </div>
                     <div class="goods-back" @click="showConfirm"><i class="icon-right"></i></div>
              </div>
              <div class="dh-list">
                 <div class="dingdan">
                     <div class="dingdannum">订单号</div>
-                    <div class="dingdancode">237482374934589</div>
+                    <div class="dingdancode">{{codeData.orderno}}</div>
                 </div>
                 <div class="quanhao">
                     <div class="quanhaonum">券号</div>
-                    <div class="quanhaocode">237482374934589</div>
+                    <div class="quanhaocode">{{codeData.code}}</div>
                 </div>
                 <div class="bar"></div>
                 <div class="youxiaoqi">
                     <div class="youxiaoqi">有效期</div>
-                    <div class="youxiaoqi">237482374934589</div>
+                    <div class="youxiaoqi">{{codeData.youxiaoqi}}</div>
                 </div>
              </div>
              <div class="button">
-                <button>确认核销</button>
+                <button @click="selectIs()">确认核销</button>
                 <button class="canel">取消</button>
              </div>
               <confirm ref="confirm" text="是否清空所有搜索历史" confirmBtnText="清空"></confirm>
@@ -40,6 +40,9 @@
 
 <script>
   import Confirm from 'base/confirm/confirm'
+  import {mapGetters} from 'vuex'
+  import storage from 'best-storage'
+  import {getIs} from 'api/seller'
     export default {
         props: {
             placeholder: {
@@ -47,12 +50,49 @@
                 default: '￥请输入提现金额'
             }
         },
+        data(){
+            return {
+                codeData:[]
+            }
+        },
+        computed:{
+            ...mapGetters([
+                'verfiy'
+            ])
+        },
+        created(){
+            this.getCodeData()
+        },
         methods:{
             back(){
                 this.$router.back()
             },
             showConfirm(){
                 this.$refs.confirm.show()
+            },
+            getCodeData(){
+                this.codeData=this.verfiy
+            },
+            selectIs(){
+                const validate = this.verfiy.validate
+                const user_account= this.verfiy.useraccount
+                const seller_wv=storage.get('seller_wv')
+                const code=this.verfiy.code
+                const sid=this.verfiy.sid
+                const time=this.verfiy.time
+                getIs(validate,user_account,seller_wv,code,time,sid).then((res)=>{
+                    if(res.flag==='1'){
+                        alert('验证成功')
+                        this.$router.push({
+          		            path: `/seller`
+    		            })
+                    }else{
+                        alert(res.msg)
+                        this.$router.push({
+          		            path: `/seller`
+    		            })
+                    }
+                })
             }
         },
         components: {

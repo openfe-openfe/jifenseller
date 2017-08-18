@@ -21,7 +21,21 @@
     data() {
       return {
         showFlag: false,
-        title: '<span>123</span>'
+        title: `<div>
+                      <p>
+                        【领取方式】
+                      </p>
+                      <p>
+                        仅限门店领取
+                      </p>
+                      <p>
+                        【使用规则】
+                      </p>
+                      <p>
+                        兑换后请尽快使用，有效期为兑换成功起10天时间，过期不退还积分。
+                      </p>
+                      </p>
+                </div>`
       }
     },
     methods: {

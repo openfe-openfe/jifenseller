@@ -174,3 +174,25 @@ export function getCode(seller_wv,token,code) {
     return Promise.resolve(res.data)
   })
 }
+
+/*确认兑换接口 */
+
+export function getIs(validate,user_account,seller_wv,code,time,sid) {
+  const url = api.base +'/api.php/home/seller/seller_confirm'
+  const data = {
+    validate:validate,
+    user_account:user_account,
+    seller_wv:seller_wv,
+    time:time,
+    code:code,
+    sid:sid
+  }
+
+  return axios.post(url, obj2params(paramsPrefilter(data)),{
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    }
+  }).then((res) => {
+    return Promise.resolve(res.data)
+  })
+}

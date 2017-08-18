@@ -126,14 +126,28 @@ export default {
 			getCode(seller_wv,token,code).then((res)=>{
 				if(res.flag ==='1'){
 					// 跳转到核销页面
+					 that.setVerfiy(res.data)
 					 that.$router.push({
 			  			path:`/verification`
-		  		    })
+		  		     })
+					 
 				}else{
 					alert(res.msg)
 				}
 				// alert(res)
 			})
+		}
+		/*原生调用方法,传递潍V号,商户号,token */
+		window.getParams=function(data){
+				const sid = data.sid
+				const seller_wv= data.seller_wv
+				const user_account = data.seller_wv
+				const token = data.token
+				storage.set('sid',sid)
+				storage.set('seller_id',sid)
+				storage.set('seller_wv',seller_wv)
+				storage.set('user_account',user_account)
+				storage.set('token',token)
 		}
     },
   methods:{
@@ -212,10 +226,11 @@ export default {
 	  selectItem(item){
 		if(item.types === 'tx'){
 			console.log(item.id)
+			this.setSeller(item)
 			this.$router.push({
           		path: `/seller/${item.id}`
     		})
-			this.setSeller(item)
+			
 		}
 	  },
 	  selectTX(){
@@ -232,7 +247,11 @@ export default {
 			try{
 				WVJsFunction.scan('scanCallback')
 			}catch(e){
-				console.log('出错了')
+				try{
+					window.webkit.messageHandlers.WVJsFunction.postMessage({scan:'scanCallback'})
+				}catch(e){
+					console.log('请在潍V内打开')
+				}
 			}
 	  },
 	  selectJL(){
@@ -248,7 +267,8 @@ export default {
         }
 	  },
 	  ...mapMutations({
-		  setSeller: 'SET_SELLER'
+		  setSeller: 'SET_SELLER',
+		  setVerfiy:'SET_VERFIY'
 	  })
   },
   components: {

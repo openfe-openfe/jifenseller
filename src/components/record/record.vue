@@ -64,7 +64,7 @@ export default {
                     if(res.flag === '1'){
                         this.record = res.data || []
                         // console.log(this.record)
-                        this._checkMore(res.data)
+                        this._checkMore(res.data,res)
                     }
                 })
             },
@@ -79,10 +79,10 @@ export default {
                 }
         	})
 	  },
-            _checkMore(data){
+            _checkMore(data,res){
                 const data2 = data
                 // console.log(data2.length)
-                if(!data2.length){
+                if(!data2.length || res.page.page == 1){
                     this.hasMore = false
                 }
             }
