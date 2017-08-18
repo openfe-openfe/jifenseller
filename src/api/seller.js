@@ -154,3 +154,23 @@ export function getPay(token,seller_id,amount,user_account) {
     return Promise.resolve(res.data)
   })
 }
+
+
+/*扫码验证接口 */
+
+export function getCode(seller_wv,token,code) {
+  const url = api.base +'/api.php/home/seller/validate_qrcode'
+  const data = {
+    seller_wv:seller_wv,
+    token:token,
+    code:code
+  }
+
+  return axios.post(url, obj2params(paramsPrefilter(data)),{
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    }
+  }).then((res) => {
+    return Promise.resolve(res.data)
+  })
+}

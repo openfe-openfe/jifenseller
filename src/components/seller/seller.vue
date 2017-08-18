@@ -81,7 +81,7 @@
 <script>
 import Scroll from 'base/scroll/scroll'
 import Loading from 'base/loading/loading'
-import {getValidateAccount,getConsumptionLogs} from 'api/seller'
+import {getValidateAccount,getConsumptionLogs,getCode} from 'api/seller'
 import {shuffle} from 'common/js/util'
 import {mapMutations} from 'vuex'
 import {Base64} from 'js-base64'
@@ -111,11 +111,29 @@ export default {
 	  this.checkOpen()
     },
      mounted(){
-		// var bs64str='e2lkOicxMjMnfQ=='
-		// bs64str = Base64.decode(bs64str)
-		// console.log(bs64str)
+		/*原生回调扫码 */
+		var that=this
 		window.scanCallback=function(data){
-			alert(data)
+			const orderData = JSON.parse(data)
+			/*拿到解密之后的base64 code值 */
+			const scanCode = Base64.decode(orderData.scanCode)
+			const seller_wv = storage.get('seller_wv')
+			const token = storage.get('token')
+			const scanCode2= JSON.parse(scanCode)
+			const code = scanCode2.code
+			// alert(code)
+			
+			getCode(seller_wv,token,code).then((res)=>{
+				if(res.flag ==='1'){
+					// 跳转到核销页面
+					 that.$router.push({
+			  			path:`/verification`
+		  		    })
+				}else{
+					alert(res.msg)
+				}
+				// alert(res)
+			})
 		}
     },
   methods:{
@@ -211,14 +229,11 @@ export default {
 		  })
 	  },
 	   selectHX(){
-		//   this.$router.push({
-		// 	  path:`/verification`
-		//   })
-		try{
-			WVJsFunction.scan('scanCallback')
-		}catch(e){
-			console.log('出错了')
-		}
+			try{
+				WVJsFunction.scan('scanCallback')
+			}catch(e){
+				console.log('出错了')
+			}
 	  },
 	  selectJL(){
 		  this.$router.push({

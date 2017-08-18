@@ -63,7 +63,7 @@ import {getValidateAccount,getPay} from 'api/seller'
                 this.$router.back()
             },
              _getValidateAccount(){
-                 console.log(123)
+                //  console.log(123)
                     const sid=storage.get('sid')
                     const seller_wv=storage.get('seller_wv')
                     const token=storage.get('token')
@@ -81,7 +81,7 @@ import {getValidateAccount,getPay} from 'api/seller'
                 getPay(token,seller_id,amount,user_account).then((res)=>{
                     if(res.flag === '1'){
                         // 跳转微信支付
-                        window.location.href=res.data
+                        window.location.href = res.data +'&redirect_url=' + encodeURI('http://webapp.icloudcity.cn:7070')
                     }
                 })
             },
