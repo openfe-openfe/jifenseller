@@ -10,7 +10,8 @@
              </div>
              <div class="title2">可提现账户余额:{{ValidateAccount.keyongyue}}元,当前账户余额:{{ValidateAccount.zongjine}}元</div>
              <div class="button">
-                <button @click="submit()">提交</button>
+                <button @click="submit()" v-if="disabled==false">提交</button>
+                <button class="disa" v-if="disabled==true" disabled="disabled">提交</button>
              </div>
              <div class="shuoming">
                 <p>注意:</p>
@@ -35,11 +36,20 @@ import storage from 'best-storage'
          data() {
             return {
                 query: '',
+                disabled:true,
                 ValidateAccount:[]
             }
          },
          created(){
              this._getValidateAccount()
+              this.$watch('query', (newQuery) => {
+                 // 监听query值的变化
+                 if(newQuery >0){
+                     this.disabled=false
+                 }else{
+                     this.disabled=true
+                 }
+            })
          },
         methods:{
             back(){
@@ -149,6 +159,15 @@ import storage from 'best-storage'
             button
                 width:100%
                 background: #ff7108
+                text-align:center
+                height:50px
+                margin:0 auto
+                border-radius:3px
+                color:#fff
+                box-shadow: 0 3px 3px rgba(250,0,0,0.1)
+            .disa
+                width:100%
+                background: #999
                 text-align:center
                 height:50px
                 margin:0 auto
