@@ -1,7 +1,7 @@
 <template>
     <div class="seller">
 		<div class="header" v-if="scrollY > -100">
-			<div class="back"><i class="icon-back"></i>返回</div>
+			<div class="back" @click="_back()"><i class="icon-back"></i>返回</div>
 			<h1 class="title">{{ValidateAccount.seller_name}}</h1>
 		</div>
 		<div class="headerW" v-if="scrollY < -100">
@@ -109,6 +109,9 @@ export default {
       this._getValidateAccount()
 	  this._getConsumptionLogs()
 	  this.checkOpen()
+	  /*隐藏title */
+	  this.showTitle()
+
     },
      mounted(){
 		/*原生回调扫码 */
@@ -137,32 +140,30 @@ export default {
 				// alert(res)
 			})
 		}
-		/*原生调用方法,传递潍V号,商户号,token */
-		window.getParams=function(data){
-				const sid = data.sid
-				const seller_wv= data.seller_wv
-				const user_account = data.seller_wv
-				const token = data.token
-				storage.set('sid',sid)
-				storage.set('seller_id',sid)
-				storage.set('seller_wv',seller_wv)
-				storage.set('user_account',user_account)
-				storage.set('token',token)
+		/*原生回调方法拿到token */
+		window.getToken=function(data){
+			/* */
+			/* */
+			const token = data
+			storage.set('token',token)
 		}
+		
     },
   methods:{
 	//   获取商户中心
 	  _getValidateAccount(){
-		  	const sid='52'
-			const seller_wv='54057460'
-			const user_account='54057460'
-			const token='B26711E76E9CADC91EDAE1F949828BEA'
+		  	/* 先调用原生方法 ,获取潍V号,*/
+		  	const sid = storage.get('sid')
+			const seller_wv = storage.get('wv_account')
+			const user_account = storage.get('wv_account')
+			const token = storage.get('token')
 			// 本地存储相关
 			storage.set('sid',sid)
 			storage.set('seller_id',sid)
 			storage.set('seller_wv',seller_wv)
 			storage.set('user_account',user_account)
 			storage.set('token',token)
+
 		  getValidateAccount(sid,seller_wv,token).then((res) => {
 			if (res.flag === '1') {
             this.ValidateAccount = res.data
@@ -242,6 +243,28 @@ export default {
 		  this.$router.push({
 			  path:`/recharge`
 		  })
+	  },
+	  showTitle(){
+		  try{
+				WVJsFunction.showTitle(false)
+			}catch(e){
+				try{
+					window.webkit.messageHandlers.WVJsFunction.postMessage({showTitle:false})
+				}catch(e){
+					console.log('请在潍V内打开')
+				}
+			}
+	  },
+	  _back(){
+		  try{
+				WVJsFunction.close()
+			}catch(e){
+				try{
+					window.webkit.messageHandlers.WVJsFunction.postMessage({close:''})
+				}catch(e){
+					console.log('请在潍V内打开')
+				}
+		}
 	  },
 	   selectHX(){
 			try{
