@@ -9,7 +9,9 @@
 				<div class="back" @click="back()"><i class="icon-back"></i>返回</div>
 				<h1 class="title">扫码核销</h1>
 		     </div>
-             <h2>{{codeData.tips}}</h2>
+             <h2 class="kehexiao" v-if="codeData.status=='0'">{{codeData.tips}}</h2>
+             <h2 class="yihexiao" v-if="codeData.status=='1'">{{codeData.tips}}</h2>
+             <h2 class="yiguoqi" v-if="codeData.status=='3'">{{codeData.tips}}</h2>
              <div class="goods">
                     <img :src="codeData.logo"/>
                     <div class="goods-content">
@@ -33,9 +35,15 @@
                     <div class="youxiaoqi">{{codeData.youxiaoqi}}</div>
                 </div>
              </div>
-             <div class="button">
+             <div class="button" v-if="codeData.status=='0'">
                 <button @click="selectIs()">确认核销</button>
-                <button class="canel">取消</button>
+                <button class="canel" @click="back()">取消</button>
+             </div>
+             <div class="button" v-if="codeData.status=='1'">
+                <button @click="back()">返回</button>
+             </div>
+             <div class="button" v-if="codeData.status=='3'">
+                <button @click="back()">返回</button>
              </div>
               <confirm ref="confirm" text="是否清空所有搜索历史" confirmBtnText="清空"></confirm>
         </div>
@@ -176,9 +184,21 @@
                 text-align: center
                 font-size: 18px
                 line-height:64px
-        h2
+        .kehexiao
             height:50px
             background:#ff7108
+            color:#fff
+            line-height:50px
+            padding-left:10px
+        .yihexiao
+            height:50px
+            background:#06c1ae
+            color:#fff
+            line-height:50px
+            padding-left:10px
+        .yiguoqi
+            height:50px
+            background:#999
             color:#fff
             line-height:50px
             padding-left:10px

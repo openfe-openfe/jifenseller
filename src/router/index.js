@@ -48,13 +48,11 @@ export default new Router({
     },
     {
       path: '/seller',
-      component: Seller,
-      children:[
-        {
-          path: ':id',
-          component: ItemList,
-        }
-      ]
+      component: Seller
+    },
+    {
+      path: '/sellerdetail',
+      component: ItemList
     },
     {
       path: '/enchashment',

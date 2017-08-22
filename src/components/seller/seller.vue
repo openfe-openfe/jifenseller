@@ -20,11 +20,14 @@
 				<h1 class="title">{{ValidateAccount.seller_name}}</h1>
 			</div>
 		</div>
+		<loading v-show="reflsh" title="释放即可刷新"></loading>
 		<div class="sellerContain">
 			<scroll  @scroll="scroll"
 					 :listenScroll="listenScroll"
 					 @scrollToEnd="loadMore"
+					 @pulldown="reflash"
 					 :pullup="pullup"
+					 :pulldown="pulldown"
 					 :probeType="3"
 					 ref="scroll" class="sellerContent" :data="zdList">
 				<div>
@@ -48,11 +51,27 @@
 				<div class="m-zc">
 					<div class="zcmony">
 						<div>资产总额</div>
-						<div class="zcmonynum">{{ValidateAccount.zongjine}}</div>
+						<div class="zcmonynum">
+						<span v-if="eyeOpen">{{ValidateAccount.zongjine}}</span>
+						<span v-if="eyeClose">
+							<i class="icon-hua"></i>
+							<i class="icon-hua"></i>
+							<i class="icon-hua"></i>
+							<i class="icon-hua"></i>
+						</span>
+						</div>
 					</div>
 					<div class="djmony">
 						<div>冻结资金</div>
-						<div class="djmonynum">{{ValidateAccount.dongjieyue}}</div>
+						<div class="djmonynum">
+							<span v-if="eyeOpen">{{ValidateAccount.dongjieyue}}</span>
+							<span v-if="eyeClose">
+								<i class="icon-hua"></i>
+								<i class="icon-hua"></i>
+								<i class="icon-hua"></i>
+								<i class="icon-hua"></i>
+							</span>
+						</div>
 					</div>
 				</div>
 				<div class="zd">账单</div>
@@ -111,6 +130,8 @@ export default {
 		scrollY: -1,
 		hasMore:true,
 		pullup: true,
+		pulldown: true,
+		reflsh:true,
 		listenScroll:true,
 		page:1,
 		count:1,
@@ -194,6 +215,7 @@ export default {
 		  getValidateAccount(sid,seller_wv,token).then((res) => {
 			if (res.flag === '1') {
             this.ValidateAccount = res.data
+			// this.reflsh=false
           }else{
 			//   alert(res.msg)
 		  }
@@ -215,6 +237,7 @@ export default {
 				this.zdList = res.data
 				this.count=res.page.count
 				// console.log(this.count)
+				// this.reflsh=false
 				this._checkMore(res.data)
 			}
         })
@@ -229,14 +252,27 @@ export default {
 			 getConsumptionLogs(sid,this.page).then((res) => {
 				if(res.flag ==='1'){
 					this.zdList = this.zdList.concat(res.data)
+					// this.reflsh=false
 					this._checkMore(res.data,this.count2)
 				}
         	})
 
 	  },
+	  reflash(){
+		  /* 执行下拉刷新逻辑 */
+		//   this.hasMore=true
+		// this.reflsh=true
+		this._getValidateAccount()
+		this._getConsumptionLogs()
+	  },
 	scroll(pos) {
-		// console.log(pos)
+		console.log(pos)
 		this.scrollY = pos.y
+		if(this.scrollY<0){
+			this.reflsh=false
+		}else{
+			this.reflsh=true
+		}
 		// console.log(this.scrollY)
 
 	},
@@ -258,7 +294,7 @@ export default {
 			console.log(item.id)
 			this.setSeller(item)
 			this.$router.push({
-          		path: `/seller/${item.id}`
+          		path: `/sellerdetail`
     		})
 			
 		}
@@ -594,7 +630,7 @@ export default {
 			justify-content:center
 			.itemname
 				margin-bottom:10px
-				font-weight:lighter
+				// font-weight:lighter
 				color:#333
 				display:flex
 				position:relative
@@ -602,10 +638,12 @@ export default {
 					position:absolute
 					right:14px
 					color:#2f8aff
+					font-weight:600
 				.txnum,.xfnum,.kfnum
 					position:absolute
 					right:44px
 					color:#ff7108
+					font-weight:600
 			.itemname >div 
 				font-weight:lighter
 				font-size:16px

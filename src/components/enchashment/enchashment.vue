@@ -82,7 +82,7 @@ import storage from 'best-storage'
                         if(res.flag === '1'){
                             // 提现成功，进入提现详情页面
                             this.$router.push({
-          		                path: `/seller/${res.data.id}`
+          		                path: `/sellerdetail`
     		                })
 			                this.setSeller(res.data)
                         }
