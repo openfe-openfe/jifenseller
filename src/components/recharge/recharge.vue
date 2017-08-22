@@ -1,7 +1,11 @@
 <template>
     <transition name="slide">
         <div class="recharge">
-             <div class="header">
+            <div class="header" v-if="phoneType == 'Android'">
+				<div class="back" @click="back()"><i class="icon-back"></i>返回</div>
+				<h1 class="title">充值</h1>
+		     </div>
+             <div class="header-ios" v-if="phoneType == 'iOS'">
 				<div class="back" @click="back()"><i class="icon-back"></i>返回</div>
 				<h1 class="title">充值</h1>
 		     </div>
@@ -33,6 +37,7 @@
 <script>
 import storage from 'best-storage'
 import {getValidateAccount,getPay} from 'api/seller'
+import {getPhoneType} from 'common/js/util'
     export default {
         props: {
             placeholder: {
@@ -44,6 +49,7 @@ import {getValidateAccount,getPay} from 'api/seller'
             return {
                 ValidateAccount:[],
                 query: '',
+                phoneType:'',
                 disabled:true
             }
         },
@@ -57,6 +63,7 @@ import {getValidateAccount,getPay} from 'api/seller'
                      this.disabled=true
                  }
             })
+            this.phoneType=getPhoneType()
         },
         methods:{
             back(){
@@ -128,6 +135,34 @@ import {getValidateAccount,getPay} from 'api/seller'
                 text-align: center
                 font-size: 18px
                 line-height:44px
+        .header-ios
+            display:flex
+            height:64px
+            width:100%
+            align-items:center
+            color:#000
+            font-size:16px
+            position:relative
+            background: #fff
+            .back
+                position:relative
+                left:10px
+                color:#06c1ae
+                height:40px
+                width:80px
+                line-height:40px
+            .back .icon-back
+                font-size:20px;
+            .title
+                position: absolute
+                left: 20%
+                width: 60%
+                text-overflow: ellipsis
+                overflow: hidden
+                white-space: nowrap
+                text-align: center
+                font-size: 18px
+                line-height:64px
          .czmony
                 height:70px
                 background: #fff

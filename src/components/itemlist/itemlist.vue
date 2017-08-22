@@ -1,10 +1,14 @@
 <template>
     <transition name="slide">
         <div class="itemList">
-            <div class="header">
-				<div class="back" @click="back()" ><i class="icon-back"></i>返回</div>
+            <div class="header" v-if="phoneType == 'Android'">
+				<div class="back" @click="back()"><i class="icon-back"></i>返回</div>
 				<h1 class="title">详情</h1>
-		    </div>
+		     </div>
+             <div class="header-ios" v-if="phoneType == 'iOS'">
+				<div class="back" @click="back()"><i class="icon-back"></i>返回</div>
+				<h1 class="title">详情</h1>
+		     </div>
             <div class="txcontent">
                 <div class="bar"></div>
                 <div class="txmony">
@@ -88,12 +92,14 @@
     import {mapGetters} from 'vuex'
     import {getTixiandetail,getCancel} from 'api/seller'
     import storage from 'best-storage'
+    import {getPhoneType} from 'common/js/util'
     export default {
         data(){
             return {
                 success:false,
                 error:false,
                 check:true,
+                phoneType:'',
                 Txdata:'',
             }
         },
@@ -137,7 +143,7 @@
         created(){
             this._getId()
             this._getTixiandetail()
-
+            this.phoneType=getPhoneType()
         }
     }
 </script>
@@ -181,6 +187,34 @@
                 text-align: center
                 font-size: 18px
                 line-height:44px
+        .header-ios
+            display:flex
+            height:64px
+            width:100%
+            align-items:center
+            color:#000
+            font-size:16px
+            position:relative
+            background: #fff
+            .back
+                position:relative
+                left:10px
+                color:#06c1ae
+                height:40px
+                width:80px
+                line-height:40px
+            .back .icon-back
+                font-size:20px;
+            .title
+                position: absolute
+                left: 20%
+                width: 60%
+                text-overflow: ellipsis
+                overflow: hidden
+                white-space: nowrap
+                text-align: center
+                font-size: 18px
+                line-height:64px
         .txcontent
             height:100%
             background: #fff

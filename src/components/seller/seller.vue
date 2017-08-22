@@ -1,12 +1,24 @@
 <template>
     <div class="seller">
-		<div class="header" v-if="scrollY > -100">
-			<div class="back" @click="_back()"><i class="icon-back"></i>返回</div>
-			<h1 class="title">{{ValidateAccount.seller_name}}</h1>
+		<div v-if="phoneType == 'Android'">
+			<div class="header" v-if="scrollY > -100">
+				<div class="back" @click="_back()"><i class="icon-back"></i>返回</div>
+				<h1 class="title">{{ValidateAccount.seller_name}}</h1>
+			</div>
+			<div class="headerW" v-if="scrollY < -100">
+				<div class="back" @click="_back()"><i class="icon-back"></i>返回</div>
+				<h1 class="title">{{ValidateAccount.seller_name}}</h1>
+			</div>
 		</div>
-		<div class="headerW" v-if="scrollY < -100">
-			<div class="back"><i class="icon-back"></i>返回</div>
-			<h1 class="title">{{ValidateAccount.seller_name}}</h1>
+		<div v-if="phoneType == 'iOS'">
+			<div class="header-ios" v-if="scrollY > -100">
+				<div class="back" @click="_back()"><i class="icon-back"></i>返回</div>
+				<h1 class="title">{{ValidateAccount.seller_name}}</h1>
+			</div>
+			<div class="headerW-ios" v-if="scrollY < -100">
+				<div class="back" @click="_back()"><i class="icon-back"></i>返回</div>
+				<h1 class="title">{{ValidateAccount.seller_name}}</h1>
+			</div>
 		</div>
 		<div class="sellerContain">
 			<scroll  @scroll="scroll"
@@ -82,7 +94,7 @@
 import Scroll from 'base/scroll/scroll'
 import Loading from 'base/loading/loading'
 import {getValidateAccount,getConsumptionLogs,getCode} from 'api/seller'
-import {shuffle} from 'common/js/util'
+import {shuffle,getPhoneType} from 'common/js/util'
 import {mapMutations} from 'vuex'
 import {Base64} from 'js-base64'
 import storage from 'best-storage'
@@ -95,6 +107,7 @@ export default {
 		eyeOpen:true,
 		eyeClose:false,
 		shuffleArry:['富可敌国','腰缠万贯','富贵荣华','挥金如土','财大气粗'],
+		phoneType:'',
 		scrollY: -1,
 		hasMore:true,
 		pullup: true,
@@ -106,12 +119,17 @@ export default {
     },
   created() {
 	  this.listenScroll = true
+	  /* 隐藏title */
+	  this.showTitle()
+	  /* 获取潍V token */
+	  this.getWVToken()
+	  /* 读取原生sid和 潍V token */
+	  this._getSellerData()
+
       this._getValidateAccount()
 	  this._getConsumptionLogs()
 	  this.checkOpen()
-	  /*隐藏title */
-	  this.showTitle()
-
+	  this.phoneType = getPhoneType()
     },
      mounted(){
 		/*原生回调扫码 */
@@ -124,7 +142,6 @@ export default {
 			const token = storage.get('token')
 			const scanCode2= JSON.parse(scanCode)
 			const code = scanCode2.code
-			// alert(code)
 			
 			getCode(seller_wv,token,code).then((res)=>{
 				if(res.flag ==='1'){
@@ -137,7 +154,6 @@ export default {
 				}else{
 					alert(res.msg)
 				}
-				// alert(res)
 			})
 		}
 		/*原生回调方法拿到token */
@@ -146,6 +162,17 @@ export default {
 			/* */
 			const token = data
 			storage.set('token',token)
+		}
+
+		/*获取sid，wv_account */
+		window.getSellerData=function(data){
+			const sellerdata=JSON.parse(data)
+			const sid = sellerdata.sid
+			const wv_account = sellerdata.wv_account
+			// alert(sid)
+			// alert(wv_account)
+			storage.set('sid',sid)
+			storage.set('wv_account',wv_account)
 		}
 		
     },
@@ -167,7 +194,9 @@ export default {
 		  getValidateAccount(sid,seller_wv,token).then((res) => {
 			if (res.flag === '1') {
             this.ValidateAccount = res.data
-          }
+          }else{
+			//   alert(res.msg)
+		  }
         })
 	  },
 	  checkOpen(){
@@ -277,6 +306,28 @@ export default {
 				}
 			}
 	  },
+	   getWVToken(){
+			try{
+				WVJsFunction.getToken('getToken')
+			}catch(e){
+				try{
+					window.webkit.messageHandlers.WVJsFunction.postMessage({getToken:'getToken'})
+				}catch(e){
+					console.log('请在潍V内打开')
+				}
+			}
+	  },
+	  _getSellerData(){
+		  try{
+				WVJsFunction.WVGetData('getSellerData',['sid','wv_account'])
+			}catch(e){
+				try{
+					window.webkit.messageHandlers.WVGetData.postMessage({'getSellerData':['sid','wv_account']})
+				}catch(e){
+					console.log('请在潍V内打开')
+				}
+			}
+	  },
 	  selectJL(){
 		  this.$router.push({
 			  path:`/record`
@@ -304,6 +355,54 @@ export default {
 <style scoped lang="stylus" rel="stylesheet/stylus">
 .seller
 	width:100%
+	.header-ios
+		display:flex
+		height:64px
+		width:100%
+		align-items:center
+		color:#fff
+		font-size:16px
+		position:relative
+		background: linear-gradient(to top, #ffb857 0%,#ff5d70 00%)
+		.back
+			position:relative
+			left:10px
+		.back .icon-back
+			font-size:20px;
+		.title
+			position: absolute
+			left: 20%
+			width: 60%
+			text-overflow: ellipsis
+			overflow: hidden
+			white-space: nowrap
+			text-align: center
+			font-size: 18px
+			line-height:44px
+	.headerW-ios
+		display:flex
+		height:64px
+		width:100%
+		align-items:center
+		color:#000
+		font-size:16px
+		position:relative
+		background:#fff
+		.back
+			position:relative
+			left:10px
+		.back .icon-back
+			font-size:20px;
+		.title
+			position: absolute
+			left: 20%
+			width: 60%
+			text-overflow: ellipsis
+			overflow: hidden
+			white-space: nowrap
+			text-align: center
+			font-size: 18px
+			line-height:64px
 	.header
 		display:flex
 		height:44px

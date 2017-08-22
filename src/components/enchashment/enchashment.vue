@@ -1,7 +1,11 @@
 <template>
     <transition name="slide">
         <div class="enchashment">
-             <div class="header">
+             <div class="header" v-if="phoneType == 'Android'">
+				<div class="back" @click="back()"><i class="icon-back"></i>返回</div>
+				<h1 class="title">提现</h1>
+		     </div>
+             <div class="header-ios" v-if="phoneType == 'iOS'">
 				<div class="back" @click="back()"><i class="icon-back"></i>返回</div>
 				<h1 class="title">提现</h1>
 		     </div>
@@ -25,6 +29,7 @@
 import {mapMutations} from 'vuex'
 import {getApply} from 'api/seller'
 import {getValidateAccount} from 'api/seller'
+import {getPhoneType} from 'common/js/util'
 import storage from 'best-storage'
     export default {
         props: {
@@ -36,6 +41,7 @@ import storage from 'best-storage'
          data() {
             return {
                 query: '',
+                phoneType:'',
                 disabled:true,
                 ValidateAccount:[]
             }
@@ -50,6 +56,7 @@ import storage from 'best-storage'
                      this.disabled=true
                  }
             })
+            this.phoneType=getPhoneType()
          },
         methods:{
             back(){
@@ -128,6 +135,34 @@ import storage from 'best-storage'
                 text-align: center
                 font-size: 18px
                 line-height:44px
+        .header-ios
+            display:flex
+            height:64px
+            width:100%
+            align-items:center
+            color:#000
+            font-size:16px
+            position:relative
+            background: #fff
+            .back
+                position:relative
+                left:10px
+                color:#06c1ae
+                height:40px
+                width:80px
+                line-height:40px
+            .back .icon-back
+                font-size:20px;
+            .title
+                position: absolute
+                left: 20%
+                width: 60%
+                text-overflow: ellipsis
+                overflow: hidden
+                white-space: nowrap
+                text-align: center
+                font-size: 18px
+                line-height:64px
         .txInput
             display:flex
             background:#fff

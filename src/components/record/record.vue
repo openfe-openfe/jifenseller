@@ -1,7 +1,11 @@
 <template>
     <transition name="slide">
         <div class="record">
-             <div class="header">
+            <div class="header" v-if="phoneType == 'Android'">
+				<div class="back" @click="back()"><i class="icon-back"></i>返回</div>
+				<h1 class="title">验证记录</h1>
+		     </div>
+             <div class="header-ios" v-if="phoneType == 'iOS'">
 				<div class="back" @click="back()"><i class="icon-back"></i>返回</div>
 				<h1 class="title">验证记录</h1>
 		     </div>
@@ -39,16 +43,19 @@ import Scroll from 'base/scroll/scroll'
 import Loading from 'base/loading/loading'
 import {getRecord} from 'api/seller'
 import storage from 'best-storage'
+import {getPhoneType} from 'common/js/util'
 export default {
         data(){
             return {
                 record:[],
                 hasMore:true,
-                pullup:true
+                pullup:true,
+                phoneType:''
             }
         },
         created(){
             this._getRecrod()
+            this.phoneType=getPhoneType()
         },
         mounted(){
             console.log(window.location)
@@ -134,6 +141,34 @@ export default {
                 text-align: center
                 font-size: 18px
                 line-height:44px
+        .header-ios
+            display:flex
+            height:64px
+            width:100%
+            align-items:center
+            color:#000
+            font-size:16px
+            position:relative
+            background: #fff
+            .back
+                position:relative
+                left:10px
+                color:#06c1ae
+                height:40px
+                width:80px
+                line-height:40px
+            .back .icon-back
+                font-size:20px;
+            .title
+                position: absolute
+                left: 20%
+                width: 60%
+                text-overflow: ellipsis
+                overflow: hidden
+                white-space: nowrap
+                text-align: center
+                font-size: 18px
+                line-height:64px
         .record-container
             position:fixed
             top:44px

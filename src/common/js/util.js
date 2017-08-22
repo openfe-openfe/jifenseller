@@ -27,3 +27,14 @@ export function debounce(func, delay) {
     }, delay)
   }
 }
+
+export function getPhoneType(){
+  let phonetype = ''
+  var ua = navigator.userAgent.toLowerCase()
+  if (/iphone|ipad|ipod/.test(ua)){
+    phonetype = 'iOS'
+  }else if (/android/.test(ua)) {
+    phonetype = 'Android'
+  }
+  return phonetype
+}
