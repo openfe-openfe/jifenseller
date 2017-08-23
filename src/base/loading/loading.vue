@@ -19,7 +19,7 @@
   .loading
     width: 100%
     text-align: center
-    padding-top:20px
+    padding-top:0px
     .desc
       line-height: 20px
       font-size: 14px

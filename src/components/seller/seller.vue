@@ -20,7 +20,7 @@
 				<h1 class="title">{{ValidateAccount.seller_name}}</h1>
 			</div>
 		</div>
-		<loading v-show="reflsh" title="释放即可刷新"></loading>
+		<loading v-show="reflsh" :title="title"></loading>
 		<div class="sellerContain">
 			<scroll  @scroll="scroll"
 					 :listenScroll="listenScroll"
@@ -95,7 +95,7 @@
 							<div class="itemtitle" v-if="item.types == 'cz'" >{{item.status}}</div>
 						</div>
 					</div>
-					<loading v-show="hasMore" title=""></loading>
+					<loading v-show="hasMore" title="数据加载中..."></loading>
 				</div>
 				
 				</div>
@@ -126,6 +126,7 @@ export default {
 		eyeOpen:true,
 		eyeClose:false,
 		shuffleArry:['富可敌国','腰缠万贯','富贵荣华','挥金如土','财大气粗'],
+		title:'下拉即可刷新...',
 		phoneType:'',
 		scrollY: -1,
 		hasMore:true,
@@ -266,12 +267,17 @@ export default {
 		this._getConsumptionLogs()
 	  },
 	scroll(pos) {
-		console.log(pos)
+		console.log(pos.y)
 		this.scrollY = pos.y
 		if(this.scrollY<0){
 			this.reflsh=false
 		}else{
 			this.reflsh=true
+			if(this.scrollY>80){
+				this.title='释放即可刷新...'
+			}else{
+				this.title='下拉即可舒心...'
+			}
 		}
 		// console.log(this.scrollY)
 
