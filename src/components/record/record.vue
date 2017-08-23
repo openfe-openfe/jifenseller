@@ -9,13 +9,19 @@
 				<div class="back" @click="back()"><i class="icon-back"></i>返回</div>
 				<h1 class="title">验证记录</h1>
 		     </div>
+             <loading v-show="reflsh" title="释放即可刷新"></loading>
              <div class="record-container">
                 <scroll class="record-list" 
-                ref="scroll"
-                @scrollToEnd="loadMore"
-                :pullup="pullup"
-                :data="record">
-                    <div>
+                    ref="scroll"
+                    @scroll="scroll"
+                    @scrollToEnd="loadMore"
+                    :pullup="pullup"
+                    :pulldown="pulldown"
+                    @pulldown="reflash"
+                    :listenScroll="listenScroll"
+                    :probeType="3"
+                    :data="record">
+                    <div v-bind:style="stylesheet">
                         <div class="record-item" v-for="item in record">
                             <div class="item-name">{{item.goodsname}}</div>
                             <div class="item-quanhao">
@@ -31,6 +37,7 @@
                                 <div class="quatimenhao-code">{{item.validate_time}}</div>
                             </div>
                         </div>
+                        
                         <loading v-show="hasMore" title=""></loading>
                     </div>
                 </scroll>
@@ -50,12 +57,22 @@ export default {
                 record:[],
                 hasMore:true,
                 pullup:true,
-                phoneType:''
+                pulldown:true,
+                listenScroll:true,
+                page:'',
+                phoneType:'',
+                scrollY: -1,
+                reflsh:true,
+                stylesheet:{
+                    minHeight:'0px'
+                }
             }
         },
         created(){
             this._getRecrod()
             this.phoneType=getPhoneType()
+            /*计算窗口高度 */
+            this.stylesheet.minHeight = (document.documentElement.clientHeight - 40)+'px'
         },
         mounted(){
             console.log(window.location)
@@ -67,11 +84,16 @@ export default {
             _getRecrod(){
                 const sid=storage.get('sid')
                 const user_account=storage.get('user_account')
-                getRecord(sid,user_account).then((res)=>{
-                    if(res.flag === '1'){
+                this.page = 1
+                getRecord(sid,user_account,this.page).then((res)=>{
+                    if(res.flag == '1'){
                         this.record = res.data || []
                         // console.log(this.record)
                         this._checkMore(res.data,res)
+                        this.reflsh=false
+                    }else{
+                        this._checkMore(res.data,res)
+                        this.reflsh=false
                     }
                 })
             },
@@ -79,20 +101,45 @@ export default {
                 if (!this.hasMore) {
                         return
                 }
-                getRecord().then((res) => {
-                    if(res.flag ==='1'){
+                const sid = storage.get('sid')
+                const user_account=storage.get('user_account')
+                this.page++
+                getRecord(sid,user_account,this.page).then((res) => {
+                    if(res.flag =='1'){
                         this.record = this.record.concat(res.data)
                         this._checkMore(res.data)
+                }else{
+                    this._checkMore(res.data,res)
                 }
         	})
 	  },
             _checkMore(data,res){
                 const data2 = data
                 // console.log(data2.length)
-                if(!data2.length || res.page.page == 1){
+                console.log(res.flag)
+                this.reflsh = false
+                if(!data2.length || res.page.page == '1' || res.flag == '0'){
+                    
                     this.hasMore = false
                 }
-            }
+            },
+            reflash(){
+                this._getRecrod()
+            },
+            scroll(pos) {
+                // console.log(pos)
+                this.scrollY = pos.y
+                if(this.scrollY<0){
+                    this.reflsh=false
+                }else{
+                    // console.log(123)
+                    this.reflsh=true
+                    /*定时器执行 */
+                    setTimeout(()=>{
+                        this.reflsh=false
+                    },1000)
+                }
+	        },
         },
         components: {
             Scroll,

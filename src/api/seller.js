@@ -59,12 +59,13 @@ export function getConsumptionLogs(sid,page) {
 }
 
 /* 验证记录接口 */
-export function getRecord(sid,user_account) {
+export function getRecord(sid,user_account,page) {
   const url = api.base + '/api.php/home/seller/getValidateLog'
 
   const data = {
     sid:sid,
-    user_account:user_account
+    user_account:user_account,
+    page:page
   }
 
   return axios.post(url, obj2params(paramsPrefilter(data)),{
