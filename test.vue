@@ -114,7 +114,6 @@ import Scroll from 'base/scroll/scroll'
 import Loading from 'base/loading/loading'
 import {getValidateAccount,getConsumptionLogs,getCode} from 'api/seller'
 import {shuffle,getPhoneType} from 'common/js/util'
-import WVJsBridge from 'common/js/wvbridge'
 import {mapMutations} from 'vuex'
 import {Base64} from 'js-base64'
 import storage from 'best-storage'
@@ -148,157 +147,27 @@ export default {
 	  this.getWVToken()
 	  /* 读取原生sid和 潍V token */
 	  this._getSellerData()
-	  this.needRefresh()
+
       this._getValidateAccount()
 	  this._getConsumptionLogs()
 	  this.checkOpen()
 	  this.phoneType = getPhoneType()
     },
-	mounted(){
-
-	},
-  methods:{
-	//   获取商户中心
-	_getValidateAccount(){
-		/* 先调用原生方法 ,获取潍V号,*/
-		const sid = storage.get('sid')
-		const seller_wv = storage.get('wv_account')
-		const user_account = storage.get('wv_account')
-		const token = storage.get('token')
-		// 本地存储相关
-		storage.set('sid',sid)
-		storage.set('seller_id',sid)
-		storage.set('seller_wv',seller_wv)
-		storage.set('user_account',user_account)
-		storage.set('token',token)
-
-		getValidateAccount(sid,seller_wv,token).then((res) => {
-			if (res.flag === '1') {
-			this.ValidateAccount = res.data
-			// this.reflsh=false
-			}else{
-			//   alert(res.msg)
-			}
-		})
-	},
-	checkOpen(){
-			if(storage.get('setHis',[]).length>0){
-				this.eyeOpen = false
-				this.eyeClose = true
-				this.shuffleArry = storage.get('setHis')
-		}
-	},
-	_getConsumptionLogs(){
-		this.page = 1
-		this.hasMore = true
-		const sid = storage.get('sid')
-		getConsumptionLogs(sid,this.page).then((res) => {
-			if(res.flag ==='1'){
-				this.zdList = res.data
-				this.count=res.page.count
-				// console.log(this.count)
-				// this.reflsh=false
-				this._checkMore(res.data)
-			}
-		})
-	},
-	loadMore(){
-		if (!this.hasMore) {
-			return
-		}
-		const sid = storage.get('sid')
-		this.page++
-		this.count2++
-			getConsumptionLogs(sid,this.page).then((res) => {
-			if(res.flag ==='1'){
-				this.zdList = this.zdList.concat(res.data)
-				// this.reflsh=false
-				this._checkMore(res.data,this.count2)
-			}
-		})
-
-	},
-	reflash(){
-		/* 执行下拉刷新逻辑 */
-	//   this.hasMore=true
-	// this.reflsh=true
-		this._getValidateAccount()
-		this._getConsumptionLogs()
-	},
-	scroll(pos) {
-		console.log(pos.y)
-		this.scrollY = pos.y
-		if(this.scrollY<0){
-			this.reflsh=false
-		}else{
-			this.reflsh=true
-			if(this.scrollY>80){
-				this.title='释放即可刷新...'
-			}else{
-				this.title='下拉即可刷新...'
-			}
-		}
-		// console.log(this.scrollY)
-
-	},
-	selectEye(){
-		this.shuffleArry = shuffle(this.shuffleArry)
-	//   this.Hisshuffle(this.shuffleArry)
-		storage.set('setHis',this.shuffleArry)
-		if(this.eyeOpen){
-			this.eyeOpen = false
-			this.eyeClose = true
-		}else{
-			this.eyeOpen = true
-			this.eyeClose = false
-			storage.remove('setHis')
-		}
-	},
-	selectItem(item){
-		if(item.types === 'tx'){
-			console.log(item.id)
-			this.setSeller(item)
-			this.$router.push({
-				path: `/sellerdetail`
-			})
-			
-		}
-	},
-	selectTX(){
-		this.$router.push({
-			path:`/enchashment`
-		})
-	},
-	selectCZ(){
-		this.$router.push({
-			path:`/recharge`
-		})
-	},
-	showTitle(){
-	/*隐藏titlebar */
-		WVJsBridge.showTitlebar(false)
-	},
-	_back(){
-	/* 关闭webview */
-		WVJsBridge.close()
-	},
-	needRefresh(){
-	/*第三方返回刷新webview */
-		WVJsBridge.needRefresh(true)
-	},
-	selectHX(){
-		var that = this
-		/*扫码验证接口 */
-		WVJsBridge.scan((data)=>{
+     mounted(){
+		/*原生回调扫码 */
+		var that=this
+		window.scanCallback=function(data){
 			const orderData = JSON.parse(data)
 			/*拿到解密之后的base64 code值 */
 			const scanCode = Base64.decode(orderData.scanCode)
 			const seller_wv = storage.get('seller_wv')
 			const token = storage.get('token')
 			const scanCode2= JSON.parse(scanCode)
+			alert(`二维码code：${scanCode2}`)
 			const code = scanCode2.code
-			// alert(code)
+			
 			getCode(seller_wv,token,code).then((res)=>{
+				alert(res)
 				if(res.flag ==='1'){
 					// 跳转到核销页面
 					 that.setVerfiy(res.data)
@@ -310,41 +179,215 @@ export default {
 					alert(res.msg)
 				}
 			})
-		})
-	},
-	getWVToken(){
-		/*获取token接口 */
-		WVJsBridge.getToken((data)=>{
+		}
+		/*原生回调方法拿到token */
+		window.getToken=function(data){
+			/* */
+			/* */
 			const token = data
 			storage.set('token',token)
-		})
-	},
-	_getSellerData(){
-		/* 获取webview本地存储 */
-		WVJsBridge.getLocalData(['sid','wv_account'],(data)=>{
+		}
+
+		/*获取sid，wv_account */
+		window.getSellerData=function(data){
 			const sellerdata=JSON.parse(data)
 			const sid = sellerdata.sid
 			const wv_account = sellerdata.wv_account
+			// alert(sid)
+			// alert(wv_account)
 			storage.set('sid',sid)
 			storage.set('wv_account',wv_account)
-		})
+		}
+		
+    },
+  methods:{
+	//   获取商户中心
+	  _getValidateAccount(){
+		  	/* 先调用原生方法 ,获取潍V号,*/
+		  	const sid = storage.get('sid')
+			const seller_wv = storage.get('wv_account')
+			const user_account = storage.get('wv_account')
+			const token = storage.get('token')
+			// 本地存储相关
+			storage.set('sid',sid)
+			storage.set('seller_id',sid)
+			storage.set('seller_wv',seller_wv)
+			storage.set('user_account',user_account)
+			storage.set('token',token)
+
+		  getValidateAccount(sid,seller_wv,token).then((res) => {
+			if (res.flag === '1') {
+            this.ValidateAccount = res.data
+			// this.reflsh=false
+          }else{
+			//   alert(res.msg)
+		  }
+        })
+	  },
+	  checkOpen(){
+		  if(storage.get('setHis',[]).length>0){
+			  this.eyeOpen = false
+			  this.eyeClose = true
+			  this.shuffleArry = storage.get('setHis')
+		}
+	  },
+	  _getConsumptionLogs(){
+		   	this.page = 1
+        	this.hasMore = true
+			const sid = storage.get('sid')
+		   getConsumptionLogs(sid,this.page).then((res) => {
+			if(res.flag ==='1'){
+				this.zdList = res.data
+				this.count=res.page.count
+				// console.log(this.count)
+				// this.reflsh=false
+				this._checkMore(res.data)
+			}
+        })
+	  },
+	  loadMore(){
+		   if (!this.hasMore) {
+          		return
+			}
+			const sid = storage.get('sid')
+			this.page++
+			this.count2++
+			 getConsumptionLogs(sid,this.page).then((res) => {
+				if(res.flag ==='1'){
+					this.zdList = this.zdList.concat(res.data)
+					// this.reflsh=false
+					this._checkMore(res.data,this.count2)
+				}
+        	})
+
+	  },
+	  reflash(){
+		  /* 执行下拉刷新逻辑 */
+		//   this.hasMore=true
+		// this.reflsh=true
+		this._getValidateAccount()
+		this._getConsumptionLogs()
+	  },
+	scroll(pos) {
+		console.log(pos.y)
+		this.scrollY = pos.y
+		if(this.scrollY<0){
+			this.reflsh=false
+		}else{
+			this.reflsh=true
+			if(this.scrollY>80){
+				this.title='释放即可刷新...'
+			}else{
+				this.title='下拉即可舒心...'
+			}
+		}
+		// console.log(this.scrollY)
+
 	},
-	selectJL(){
-		this.$router.push({
-			path:`/record`
-		})
-	},
-	_checkMore(data,count){
+	  selectEye(){
+		  this.shuffleArry = shuffle(this.shuffleArry)
+		//   this.Hisshuffle(this.shuffleArry)
+		  storage.set('setHis',this.shuffleArry)
+		  if(this.eyeOpen){
+			  this.eyeOpen = false
+			  this.eyeClose = true
+		  }else{
+			  this.eyeOpen = true
+			  this.eyeClose = false
+			  storage.remove('setHis')
+		  }
+	  },
+	  selectItem(item){
+		if(item.types === 'tx'){
+			console.log(item.id)
+			this.setSeller(item)
+			this.$router.push({
+          		path: `/sellerdetail`
+    		})
+			
+		}
+	  },
+	  selectTX(){
+		  this.$router.push({
+			  path:`/enchashment`
+		  })
+	  },
+	  selectCZ(){
+		  this.$router.push({
+			  path:`/recharge`
+		  })
+	  },
+	  showTitle(){
+		  try{
+				WVJsFunction.showTitle(false)
+			}catch(e){
+				try{
+					window.webkit.messageHandlers.WVJsFunction.postMessage({showTitle:false})
+				}catch(e){
+					console.log('请在潍V内打开')
+				}
+			}
+	  },
+	  _back(){
+		  try{
+				WVJsFunction.close()
+			}catch(e){
+				try{
+					window.webkit.messageHandlers.WVJsFunction.postMessage({close:''})
+				}catch(e){
+					console.log('请在潍V内打开')
+				}
+		}
+	  },
+	   selectHX(){
+			try{
+				WVJsFunction.scan('scanCallback')
+			}catch(e){
+				try{
+					window.webkit.messageHandlers.WVJsFunction.postMessage({scan:'scanCallback'})
+				}catch(e){
+					console.log('请在潍V内打开')
+				}
+			}
+	  },
+	   getWVToken(){
+			try{
+				WVJsFunction.getToken('getToken')
+			}catch(e){
+				try{
+					window.webkit.messageHandlers.WVJsFunction.postMessage({getToken:'getToken'})
+				}catch(e){
+					console.log('请在潍V内打开')
+				}
+			}
+	  },
+	  _getSellerData(){
+		  try{
+				WVJsFunction.WVGetData('getSellerData',['sid','wv_account'])
+			}catch(e){
+				try{
+					window.webkit.messageHandlers.WVGetData.postMessage({'getSellerData':['sid','wv_account']})
+				}catch(e){
+					console.log('请在潍V内打开')
+				}
+			}
+	  },
+	  selectJL(){
+		  this.$router.push({
+			  path:`/record`
+		  })
+	  },
+	  _checkMore(data,count){
 		const data2 = data
 		// console.log(data2)
-		if (count >= this.count || !data2.length) {
-			this.hasMore = false
-		}
-	},
-	...mapMutations({
-		setSeller: 'SET_SELLER',
-		setVerfiy:'SET_VERFIY'
-	})
+        if (count >= this.count || !data2.length) {
+          this.hasMore = false
+        }
+	  },
+	  ...mapMutations({
+		  setSeller: 'SET_SELLER',
+		  setVerfiy:'SET_VERFIY'
+	  })
   },
   components: {
       Scroll,
