@@ -19,11 +19,8 @@
              <div class="czInput">
                 <input ref="query" v-model="query" class="box" :placeholder="placeholder"/>
              </div>
-             <div class="title2">
-                <p>我已阅读并同意<span>《潍V用户协议》</span></p>
-             </div>
              <div class="button">
-                <button @click="pay()" v-if="disabled==false">立即充值</button>
+                <button @click.stop.prevent="pay()" v-if="disabled==false">立即充值</button>
                 <button class="disa" v-if="disabled==true" disabled="disabled">立即充值</button>
              </div>
              <div class="shuoming">
@@ -57,8 +54,11 @@ import {getPhoneType} from 'common/js/util'
             this._getValidateAccount()
             this.$watch('query', (newQuery) => {
                  // 监听query值的变化
-                 if(newQuery >0){
+                //  newQuery = (parseFloat(newQuery)).toFixed(2)
+                 newQuery = newQuery.replace(/^(\-)*(\d+)\.(\d\d).*$/,'$1$2.$3')
+                 if(newQuery >=0.01){
                      this.disabled=false
+                     this.query = newQuery
                  }else{
                      this.disabled=true
                  }

@@ -322,7 +322,7 @@ export default {
 	_getSellerData(){
 		/* 获取webview本地存储 */
 		WVJsBridge.getLocalData(['sid','wv_account'],(data)=>{
-			const sellerdata=JSON.parse(data)
+			const sellerdata = JSON.parse(data)
 			const sid = sellerdata.sid
 			const wv_account = sellerdata.wv_account
 			storage.set('sid',sid)

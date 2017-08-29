@@ -36,8 +36,9 @@
                 </div>
              </div>
              <div class="button" v-if="codeData.status=='0'">
-                <button @click="selectIs()">确认核销</button>
-                <button class="canel" @click="back()">取消</button>
+                <button @click.stop="selectIs()" v-if="disabled==false">确认核销</button>
+                <button class="disa" v-if="disabled==true" >确认核销</button>
+                <button class="canel" @click.stop="back()">取消</button>
              </div>
              <div class="button" v-if="codeData.status=='1'">
                 <button @click="back()">返回</button>
@@ -45,7 +46,7 @@
              <div class="button" v-if="codeData.status=='3'">
                 <button @click="back()">返回</button>
              </div>
-              <confirm ref="confirm" text="是否清空所有搜索历史" confirmBtnText="清空"></confirm>
+              <confirm ref="confirm" :title="codeData.content" confirmBtnText="清空"></confirm>
         </div>
     </transition>
 </template>
@@ -66,7 +67,9 @@
         data(){
             return {
                 codeData:[],
-                phoneType:''
+                phoneType:'',
+                disabled:false,
+                title:'<h1>123</h1>'
             }
         },
         computed:{
@@ -89,6 +92,10 @@
                 this.codeData=this.verfiy
             },
             selectIs(){
+                this.disabled=true
+                setTimeout(()=>{
+                    this.disabled=false
+                },1000)
                 const validate = this.verfiy.validate
                 const user_account= this.verfiy.useraccount
                 const seller_wv=storage.get('seller_wv')
@@ -231,6 +238,7 @@
             .goods-back
                 position:absolute
                 right:10px
+                top:30px
         .dh-list
             display:flex
             flex-direction:column
@@ -272,6 +280,15 @@
             button
                 width:100%
                 background: #ff7108
+                text-align:center
+                height:50px
+                margin:0 auto
+                border-radius:3px
+                color:#fff
+                box-shadow: 0 3px 3px rgba(250,0,0,0.1)
+            .disa
+                width:100%
+                background: #999
                 text-align:center
                 height:50px
                 margin:0 auto

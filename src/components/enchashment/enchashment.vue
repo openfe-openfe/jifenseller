@@ -14,7 +14,7 @@
              </div>
              <div class="title2">可提现账户余额:{{ValidateAccount.keyongyue}}元,当前账户余额:{{ValidateAccount.zongjine}}元</div>
              <div class="button">
-                <button @click="submit()" v-if="disabled==false">提交</button>
+                <button @click.stop.prevent="submit()" v-if="disabled==false">提交</button>
                 <button class="disa" v-if="disabled==true" disabled="disabled">提交</button>
              </div>
              <div class="shuoming">
@@ -50,7 +50,12 @@ import storage from 'best-storage'
              this._getValidateAccount()
               this.$watch('query', (newQuery) => {
                  // 监听query值的变化
-                 if(newQuery >0){
+                //  newQuery = (parseFloat(newQuery)).toFixed(2)
+                 newQuery = newQuery.replace(/^(\-)*(\d+)\.(\d\d).*$/,'$1$2.$3')
+                //   console.log(newQuery)
+                // 
+                 if(newQuery >=0.01 && newQuery <= Number(this.ValidateAccount.keyongyue)){
+                     this.query = newQuery
                      this.disabled=false
                  }else{
                      this.disabled=true
@@ -74,6 +79,7 @@ import storage from 'best-storage'
 	        },
             submit(){
             //    console.log(this.$refs.query.value)
+                    this.disabled=true
                     const seller_id=storage.get('sid')
                     const token=storage.get('token')
                     const amount=this.$refs.query.value
@@ -81,10 +87,17 @@ import storage from 'best-storage'
                     getApply(token,seller_id,amount,user_account).then((res)=>{
                         if(res.flag === '1'){
                             // 提现成功，进入提现详情页面
+                            setTimeout(()=>{
+                                this.disabled=false
+                            },1000)
                             this.$router.push({
           		                path: `/sellerdetail`
     		                })
 			                this.setSeller(res.data)
+                        }else{
+                            setTimeout(()=>{
+                                this.disabled=false
+                            },1000)
                         }
                     })
             },
