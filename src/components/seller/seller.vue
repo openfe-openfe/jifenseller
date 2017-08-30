@@ -142,17 +142,21 @@ export default {
     },
   created() {
 	  this.listenScroll = true
+	  this.phoneType = getPhoneType()
 	  /* 隐藏title */
 	  this.showTitle()
+	  this.needRefresh()
 	  /* 获取潍V token */
 	  this.getWVToken()
 	  /* 读取原生sid和 潍V token */
 	  this._getSellerData()
-	  this.needRefresh()
-      this._getValidateAccount()
+	  this._getValidateAccount()
 	  this._getConsumptionLogs()
 	  this.checkOpen()
-	  this.phoneType = getPhoneType()
+	  setTimeout(()=>{
+		  this._getValidateAccount()
+	  	  this._getConsumptionLogs()
+	  },2000)
     },
 	mounted(){
 
@@ -160,24 +164,17 @@ export default {
   methods:{
 	//   获取商户中心
 	_getValidateAccount(){
-		/* 先调用原生方法 ,获取潍V号,*/
 		const sid = storage.get('sid')
-		const seller_wv = storage.get('wv_account')
-		const user_account = storage.get('wv_account')
+		const seller_wv = storage.get('seller_wv')
+		const user_account = storage.get('user_account')
 		const token = storage.get('token')
-		// 本地存储相关
-		storage.set('sid',sid)
-		storage.set('seller_id',sid)
-		storage.set('seller_wv',seller_wv)
-		storage.set('user_account',user_account)
-		storage.set('token',token)
-
 		getValidateAccount(sid,seller_wv,token).then((res) => {
 			if (res.flag === '1') {
 			this.ValidateAccount = res.data
-			// this.reflsh=false
+			this.reflsh=false
 			}else{
-			//   alert(res.msg)
+			    // alert(res.msg)
+				this.reflsh=false
 			}
 		})
 	},
@@ -197,8 +194,10 @@ export default {
 				this.zdList = res.data
 				this.count=res.page.count
 				// console.log(this.count)
-				// this.reflsh=false
+				this.reflsh=false
 				this._checkMore(res.data)
+			}else{
+				this.reflsh=false
 			}
 		})
 	},
@@ -212,7 +211,7 @@ export default {
 			getConsumptionLogs(sid,this.page).then((res) => {
 			if(res.flag ==='1'){
 				this.zdList = this.zdList.concat(res.data)
-				// this.reflsh=false
+				this.reflsh=false
 				this._checkMore(res.data,this.count2)
 			}
 		})
@@ -317,6 +316,7 @@ export default {
 		WVJsBridge.getToken((data)=>{
 			const token = data
 			storage.set('token',token)
+			return Promise.resolve(token)
 		})
 	},
 	_getSellerData(){
@@ -326,7 +326,11 @@ export default {
 			const sid = sellerdata.sid
 			const wv_account = sellerdata.wv_account
 			storage.set('sid',sid)
+			storage.set('seller_id',sid)
 			storage.set('wv_account',wv_account)
+			storage.set('user_account',wv_account)
+			storage.set('seller_wv',wv_account)
+			return Promise.resolve(sellerdata)
 		})
 	},
 	selectJL(){
@@ -379,7 +383,7 @@ export default {
 			white-space: nowrap
 			text-align: center
 			font-size: 18px
-			line-height:44px
+			line-height:64px
 	.headerW-ios
 		display:flex
 		height:64px
@@ -604,9 +608,14 @@ export default {
 					right:14px
 					color:#2f8aff
 					font-weight:600
-				.txnum,.xfnum,.kfnum
+				.txnum
 					position:absolute
 					right:44px
+					color:#ff7108
+					font-weight:600
+				.xfnum,.kfnum
+					position:absolute
+					right:10px
 					color:#ff7108
 					font-weight:600
 			.itemname >div 

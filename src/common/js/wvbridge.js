@@ -94,6 +94,28 @@ let WVJsBridge = {
         }
     },
     /** 
+     * 写入webview本地存储
+     * @param {object} object 对象
+     * @example
+     *  WVJsBridge.setLocalData({
+     *      key1:'value1',
+     *      key2:'value2'
+     *  })
+     **/
+    setLocalData(obj){
+        const objstring = JSON.stringify(obj)
+        try{
+            WVJsFunction.WVSaveData(objstring)
+        }catch(e){
+            try{
+                window.webkit.messageHandlers.WVSaveData.postMessage(objstring)
+            }catch(e){
+                console.log('请在潍V内打开')
+            }
+            
+        }
+    },
+    /** 
      * 读取webview本地存储
      * @param {array} arr 数组
      * @param {function} callback 回调函数 
