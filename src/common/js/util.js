@@ -43,7 +43,6 @@ export function getPhoneType(){
 export function isWV(){
   var ua = navigator.userAgent.toLowerCase()
   if(!/icloudcity/.test(ua)){
-    // alert('支付完成,请在潍V内查看')
     return Promise.reject()
   }else{
     return Promise.resolve()
