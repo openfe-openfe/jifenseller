@@ -135,6 +135,8 @@
                         this.$router.push({
           		            path: `/seller`
     		            })
+                    }else{
+                        alert(res.msg)
                     }
                 })
                 

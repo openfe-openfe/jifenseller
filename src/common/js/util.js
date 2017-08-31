@@ -31,10 +31,21 @@ export function debounce(func, delay) {
 export function getPhoneType(){
   let phonetype = ''
   var ua = navigator.userAgent.toLowerCase()
+  // alert(ua)
   if (/iphone|ipad|ipod/.test(ua)){
     phonetype = 'iOS'
   }else if (/android/.test(ua)) {
     phonetype = 'Android'
   }
   return phonetype
+}
+
+export function isWV(){
+  var ua = navigator.userAgent.toLowerCase()
+  if(!/icloudcity/.test(ua)){
+    // alert('支付完成,请在潍V内查看')
+    return Promise.reject()
+  }else{
+    return Promise.resolve()
+  }
 }

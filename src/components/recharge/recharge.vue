@@ -188,6 +188,8 @@ import {getPhoneType} from 'common/js/util'
                     // font-weight:lighter
         .czInput
             display:flex
+            align-items: center
+            box-sizing: border-box
             background:#fff
             height:50px
             width:100%

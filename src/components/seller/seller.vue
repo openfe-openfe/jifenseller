@@ -104,6 +104,10 @@
 				<div class="tixian" @click="selectTX()">提现</div>
 				<div class="chongzhi" @click="selectCZ()">充值</div>
 			</div>
+			<div class="fixed" v-if="isWV">
+				<img src="http://oij04cgoe.bkt.clouddn.com/wv.png"/>
+				<p>支付完成,请手动打开潍V</p>
+			</div>
 			<router-view></router-view>
 		</div>
     </div>
@@ -113,7 +117,7 @@
 import Scroll from 'base/scroll/scroll'
 import Loading from 'base/loading/loading'
 import {getValidateAccount,getConsumptionLogs,getCode} from 'api/seller'
-import {shuffle,getPhoneType} from 'common/js/util'
+import {shuffle,getPhoneType,isWV} from 'common/js/util'
 import WVJsBridge from 'common/js/wvbridge'
 import {mapMutations} from 'vuex'
 import {Base64} from 'js-base64'
@@ -137,10 +141,20 @@ export default {
 		listenScroll:true,
 		page:1,
 		count:1,
+		isWV:false,
 		count2:1
       }
     },
   created() {
+	  // 检测是不是在潍V打开
+	  isWV()
+	  .then(()=>{
+		  console.log('潍V内')
+	  })
+	  .catch((e)=>{
+		this.isWV=true
+		window.location.href="weiv://"
+	  })
 	  this.listenScroll = true
 	  this.phoneType = getPhoneType()
 	  /* 隐藏title */
@@ -671,5 +685,18 @@ export default {
 			line-height:50px
 			background:#06c1ae
 			color:#fff
-
+	.fixed
+		position:fixed
+		top:0px
+		height:100%
+		width:100%
+		display:flex
+		justify-content:center
+		align-items:center
+		flex-direction:column
+		background:rgba(0,0,0,0.8)
+		color:#fff
+		img
+			width:150px
+			height:150px
 </style>

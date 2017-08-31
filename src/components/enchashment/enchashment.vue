@@ -178,6 +178,8 @@ import storage from 'best-storage'
                 line-height:64px
         .txInput
             display:flex
+            align-items: center
+            box-sizing: border-box
             background:#fff
             height:50px
             width:100%
