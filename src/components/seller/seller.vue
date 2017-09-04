@@ -330,7 +330,7 @@ export default {
 		WVJsBridge.getToken((data)=>{
 			const token = data
 			storage.set('token',token)
-			return Promise.resolve(token)
+			// return Promise.resolve(token)
 		})
 	},
 	_getSellerData(){
@@ -344,7 +344,7 @@ export default {
 			storage.set('wv_account',wv_account)
 			storage.set('user_account',wv_account)
 			storage.set('seller_wv',wv_account)
-			return Promise.resolve(sellerdata)
+			// return Promise.resolve(sellerdata)
 		})
 	},
 	selectJL(){
@@ -358,6 +358,12 @@ export default {
 		if (count >= this.count || !data2.length) {
 			this.hasMore = false
 		}
+	},
+	testa(){
+		WVJsBridge.test()
+		.then((res)=>{
+			console.log(res)
+		})
 	},
 	...mapMutations({
 		setSeller: 'SET_SELLER',

@@ -174,7 +174,7 @@ let WVJsBridge = {
                     console.log('请在潍V内打开')
                 }
         }
-    },
+    }
 
 }
 
