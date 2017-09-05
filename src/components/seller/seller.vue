@@ -172,9 +172,6 @@ export default {
 	  	  this._getConsumptionLogs()
 	  },2000)
     },
-	mounted(){
-
-	},
   methods:{
 	//   获取商户中心
 	_getValidateAccount(){
@@ -358,12 +355,6 @@ export default {
 		if (count >= this.count || !data2.length) {
 			this.hasMore = false
 		}
-	},
-	testa(){
-		WVJsBridge.test()
-		.then((res)=>{
-			console.log(res)
-		})
 	},
 	...mapMutations({
 		setSeller: 'SET_SELLER',
