@@ -152,8 +152,18 @@ export default {
 		  console.log('潍V内')
 	  })
 	  .catch((e)=>{
-		this.isWV=true
-		window.location.href="weiv://"
+		// window.location.href="weiv://"
+		this.$alert('支付成功,请在潍V内查看',{
+			title:'提醒',
+			btn:{
+				text:'确定'
+			}
+		})
+		.then(()=>{
+			// this.isWV=true
+			window.location.href="weiv://"
+		})
+		
 	  })
 	  this.listenScroll = true
 	  this.phoneType = getPhoneType()
