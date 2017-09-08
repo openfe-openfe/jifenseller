@@ -7,9 +7,9 @@ import router from './router'
 import 'common/stylus/index.styl'
 import fastclick from 'fastclick'
 import store from './store'
-import {Alert, Confirm, Toast} from 'base/songhao-messagebox'
+import {Alert, Confirm, Toast} from 'songhao-vue-messagebox'
 // // 样式文件
-// import 'vue-better-messagebox/style.styl'
+import 'songhao-vue-messagebox/style.css'
 Vue.use(Alert)
 Vue.use(Confirm)
 Vue.use(Toast)
