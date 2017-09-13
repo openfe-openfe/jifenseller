@@ -104,15 +104,30 @@
                 const time=this.verfiy.time
                 getIs(validate,user_account,seller_wv,code,time,sid).then((res)=>{
                     if(res.flag==='1'){
-                        alert('验证成功')
-                        this.$router.push({
-          		            path: `/seller`
-    		            })
+                        this.$alert('验证成功',{
+                            title:'提醒',
+                            btn:{
+                                text:'确定'
+                            }
+		                })
+                        .then(()=>{
+                            this.$router.push({
+                            path: `/seller`
+                            })
+                        })
+                       
                     }else{
-                        alert(res.msg)
-                        this.$router.push({
-          		            path: `/seller`
-    		            })
+                        this.$alert(res.msg,{
+                            title:'提醒',
+                            btn:{
+                                text:'确定'
+                            }
+		                })
+                        .then(()=>{
+                            this.$router.push({
+                            path: `/seller`
+                            })
+                        })
                     }
                 })
             }
