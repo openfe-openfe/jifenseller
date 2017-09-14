@@ -33,6 +33,10 @@
         type: Boolean,
         default: false
       },
+      pullDownRefresh: {
+        type: null,
+        default: false
+      },
       beforeScroll: {
         type: Boolean,
         default: false
@@ -54,7 +58,8 @@
         }
         this.scroll = new BScroll(this.$refs.wrapper, {
           probeType: this.probeType,
-          click: this.click
+          click: this.click,
+          pullDownRefresh :this.pullDownRefresh
         })
 
         if (this.listenScroll) {
@@ -73,14 +78,12 @@
             }
           })
         }
-        if (this.pulldown){
-          this.scroll.on('touchend',(pos) => {
-            // console.log(pos.y)
-            if(pos.y > 50){
-            //  console.log(pos.y)
-              this.$emit('pulldown')
-            }
-          })
+        if (this.pullDownRefresh){
+            this.scroll.on('pullingDown', () => {
+            console.log(123)
+            
+            this.$emit('pullingDown')
+            })
         }
         if (this.beforeScroll) {
           this.scroll.on('beforeScrollStart', () => {
@@ -105,6 +108,9 @@
       // 使用apply，因为需要接受参数
       scrollToElement() {
         this.scroll && this.scroll.scrollToElement.apply(this.scroll, arguments)
+      },
+      finishPullDown() {
+        this.scroll && this.scroll.finishPullDown()
       }
     },
     watch: {

@@ -16,8 +16,8 @@
                     @scroll="scroll"
                     @scrollToEnd="loadMore"
                     :pullup="pullup"
-                    :pulldown="pulldown"
-                    @pulldown="reflash"
+                    :pullDownRefresh="pullDownRefresh"
+					@pullingDown="pullingDown"
                     :listenScroll="listenScroll"
                     :probeType="3"
                     :data="record">
@@ -65,7 +65,8 @@ export default {
                 reflsh:true,
                 stylesheet:{
                     minHeight:'0px'
-                }
+                },
+                pullDownRefresh:{threshold:90,stop:50}
             }
         },
         created(){
@@ -123,9 +124,15 @@ export default {
                     this.hasMore = false
                 }
             },
-            reflash(){
-                this._getRecrod()
-            },
+            pullingDown(){
+                console.log('pulling data')
+                this.title="刷新中"
+                setTimeout(()=>{
+                    this._getRecrod()
+                    this.$refs.scroll.finishPullDown()
+                },1000)
+		
+	        },
             scroll(pos) {
                 // console.log(pos)
                 this.scrollY = pos.y
@@ -135,6 +142,9 @@ export default {
                     // console.log(123)
                     this.reflsh=true
                     /*定时器执行 */
+                    if(this.scrollY<50){
+				        this.title='下拉刷新'
+			        }
                     setTimeout(()=>{
                         this.reflsh=false
                     },1000)

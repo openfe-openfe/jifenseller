@@ -25,9 +25,9 @@
 			<scroll  @scroll="scroll"
 					 :listenScroll="listenScroll"
 					 @scrollToEnd="loadMore"
-					 @pulldown="reflash"
 					 :pullup="pullup"
-					 :pulldown="pulldown"
+					 :pullDownRefresh="pullDownRefresh"
+					 @pullingDown="pullingDown"
 					 :probeType="3"
 					 ref="scroll" class="sellerContent" :data="zdList">
 				<div>
@@ -131,7 +131,7 @@ export default {
 		eyeOpen:true,
 		eyeClose:false,
 		shuffleArry:['富可敌国','腰缠万贯','富贵荣华','挥金如土','财大气粗'],
-		title:'下拉即可刷新...',
+		title:'',
 		phoneType:'',
 		scrollY: -1,
 		hasMore:true,
@@ -142,29 +142,30 @@ export default {
 		page:1,
 		count:1,
 		isWV:false,
-		count2:1
+		count2:1,
+		pullDownRefresh:{threshold:90,stop:50}
       }
     },
   created() {
 	  // 检测是不是在潍V打开
-	  isWV()
-	  .then(()=>{
-		  console.log('潍V内')
-	  })
-	  .catch((e)=>{
-		// window.location.href="weiv://"
-		this.$alert('支付成功,请在潍V内查看',{
-			title:'提醒',
-			btn:{
-				text:'确定'
-			}
-		})
-		.then(()=>{
-			// this.isWV=true
-			window.location.href="weiv://"
-		})
+	//   isWV()
+	//   .then(()=>{
+	// 	  console.log('潍V内')
+	//   })
+	//   .catch((e)=>{
+	// 	// window.location.href="weiv://"
+	// 	this.$alert('支付成功,请在潍V内查看',{
+	// 		title:'提醒',
+	// 		btn:{
+	// 			text:'确定'
+	// 		}
+	// 	})
+	// 	.then(()=>{
+	// 		// this.isWV=true
+	// 		window.location.href="weiv://"
+	// 	})
 		
-	  })
+	//   })
 	  this.listenScroll = true
 	  this.phoneType = getPhoneType()
 	  /* 隐藏title */
@@ -238,24 +239,25 @@ export default {
 		})
 
 	},
-	reflash(){
-		/* 执行下拉刷新逻辑 */
-	//   this.hasMore=true
-	// this.reflsh=true
-		this._getValidateAccount()
-		this._getConsumptionLogs()
+	pullingDown(){
+		console.log('pulling data')
+		this.title="刷新中"
+		setTimeout(()=>{
+			this._getValidateAccount()
+			this._getConsumptionLogs()
+			this.$refs.scroll.finishPullDown()
+		},1000)
+		
 	},
 	scroll(pos) {
-		console.log(pos.y)
+		// console.log(pos.y)
 		this.scrollY = pos.y
 		if(this.scrollY<0){
 			this.reflsh=false
 		}else{
 			this.reflsh=true
-			if(this.scrollY>80){
-				this.title='释放即可刷新...'
-			}else{
-				this.title='下拉即可刷新...'
+			if(this.scrollY<50){
+				this.title='下拉刷新'
 			}
 		}
 		// console.log(this.scrollY)
