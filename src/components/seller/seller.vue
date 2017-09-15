@@ -30,7 +30,7 @@
                     </div>
                 </div>
         </div>
-		<div class="sellerContain">
+		<div class="sellerContain" :style="isiOS">
 			<scroll  @scroll="scroll"
 					 :listenScroll="listenScroll"
 					 @scrollToEnd="loadMore"
@@ -157,7 +157,8 @@ export default {
 		beforePullDown:true,
 		bubbleY: 0,
 		bulling:false,
-		pullDownStyle: ''
+		pullDownStyle: '',
+		isiOS:`top:44px`
       }
     },
   created() {
@@ -198,6 +199,11 @@ export default {
 	  	  this._getConsumptionLogs()
 	  },2000)
     },
+	mounted(){
+		if(getPhoneType()=='iOS'){
+			this.isiOS=`top:64px`
+		}
+	},
   methods:{
 	//   获取商户中心
 	_getValidateAccount(){
@@ -269,9 +275,15 @@ export default {
 	scroll(pos) {
 		// console.log(pos.y)
 		this.scrollY = pos.y
+		let pullDownPostion=0
+		if(this.phoneType=='iOS'){
+			pullDownPostion = 64
+		}else{
+			pullDownPostion = 44
+		}
 		if (this.beforePullDown) {
                     this.bubbleY = Math.max(0, pos.y + this.pullDownInitTop)
-                    this.pullDownStyle = `top:${Math.min(pos.y + 44 , 44)}px`
+                    this.pullDownStyle = `top:${Math.min(pos.y + pullDownPostion , pullDownPostion)}px`
                 } else {
                     this.bubbleY = 0
                 }
@@ -499,7 +511,6 @@ export default {
 		position: absolute
 		width: 100%
 		left: 0
-		top: 44px
 		display: flex
 		justify-content center
 		align-items center

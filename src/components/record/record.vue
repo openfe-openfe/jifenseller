@@ -19,7 +19,7 @@
                     </div>
                 </div>
             </div>
-             <div class="record-container">
+             <div class="record-container" :style="isiOS">
                 <scroll class="record-list" 
                     ref="scroll"
                     @scroll="scroll"
@@ -79,7 +79,8 @@ export default {
                 beforePullDown:true,
                 bubbleY: 0,
                 bulling:false,
-                pullDownStyle: ''
+                pullDownStyle: '',
+                isiOS:`top:44px`
             }
         },
         created(){
@@ -93,7 +94,9 @@ export default {
             this.stylesheet.minHeight = (document.documentElement.clientHeight - 40)+'px'
         },
         mounted(){
-            console.log(window.location)
+            if(getPhoneType()=='iOS'){
+			    this.isiOS=`top:64px`
+		    }
         },
         methods:{
             back(){
@@ -155,12 +158,18 @@ export default {
 	        },
             scroll(pos) {
                 // console.log(pos)
-                if (this.beforePullDown) {
-                    this.bubbleY = Math.max(0, pos.y + this.pullDownInitTop)
-                    this.pullDownStyle = `top:${Math.min(pos.y + 44 , 44)}px`
-                } else {
-                    this.bubbleY = 0
-                }
+                let pullDownPostion=0
+                    if(this.phoneType=='iOS'){
+                        pullDownPostion = 64
+                    }else{
+                        pullDownPostion = 44
+                    }
+                    if (this.beforePullDown) {
+                        this.bubbleY = Math.max(0, pos.y + this.pullDownInitTop)
+                        this.pullDownStyle = `top:${Math.min(pos.y + pullDownPostion , pullDownPostion)}px`
+                    } else {
+                        this.bubbleY = 0
+                    }
 	        },
         },
         components: {
@@ -215,7 +224,6 @@ export default {
             position: absolute
             width: 100%
             left: 0
-            top: 44px
             display: flex
             justify-content center
             align-items center
