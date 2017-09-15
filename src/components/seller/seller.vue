@@ -20,7 +20,16 @@
 				<h1 class="title">{{ValidateAccount.seller_name}}</h1>
 			</div>
 		</div>
-		<loading v-show="reflsh" :title="title"></loading>
+		<div ref="pulldown" class="pulldown-wrapper" :style="pullDownStyle" v-if="pullDownRefresh">
+                <div class="before-trigger" v-if="beforePullDown">
+                    <bubble :y="bubbleY"></bubble>
+                </div>
+                <div class="after-trigger" v-else>
+                    <div v-if="pulling" class="loading">
+                        <loading></loading>
+                    </div>
+                </div>
+        </div>
 		<div class="sellerContain">
 			<scroll  @scroll="scroll"
 					 :listenScroll="listenScroll"
@@ -116,6 +125,7 @@
 <script>
 import Scroll from 'base/scroll/scroll'
 import Loading from 'base/loading/loading'
+import Bubble from 'base/bubble/bubble'
 import {getValidateAccount,getConsumptionLogs,getCode} from 'api/seller'
 import {shuffle,getPhoneType,isWV} from 'common/js/util'
 import WVJsBridge from 'common/js/wvbridge'
@@ -143,7 +153,11 @@ export default {
 		count:1,
 		isWV:false,
 		count2:1,
-		pullDownRefresh:{threshold:90,stop:50}
+		pullDownRefresh:{threshold:60,stop:60},
+		beforePullDown:true,
+		bubbleY: 0,
+		bulling:false,
+		pullDownStyle: ''
       }
     },
   created() {
@@ -166,6 +180,7 @@ export default {
 	// 	})
 		
 	//   })
+	  this.pullDownInitTop = 0
 	  this.listenScroll = true
 	  this.phoneType = getPhoneType()
 	  /* 隐藏title */
@@ -241,10 +256,12 @@ export default {
 	},
 	pullingDown(){
 		console.log('pulling data')
-		this.title="刷新中"
+		 this.beforePullDown = false
+         this.pulling = true
 		setTimeout(()=>{
 			this._getValidateAccount()
 			this._getConsumptionLogs()
+			this.beforePullDown = true
 			this.$refs.scroll.finishPullDown()
 		},1000)
 		
@@ -252,14 +269,12 @@ export default {
 	scroll(pos) {
 		// console.log(pos.y)
 		this.scrollY = pos.y
-		if(this.scrollY<0){
-			this.reflsh=false
-		}else{
-			this.reflsh=true
-			if(this.scrollY<50){
-				this.title='下拉刷新'
-			}
-		}
+		if (this.beforePullDown) {
+                    this.bubbleY = Math.max(0, pos.y + this.pullDownInitTop)
+                    this.pullDownStyle = `top:${Math.min(pos.y + 44 , 44)}px`
+                } else {
+                    this.bubbleY = 0
+                }
 		// console.log(this.scrollY)
 
 	},
@@ -375,7 +390,8 @@ export default {
   },
   components: {
       Scroll,
-	  Loading
+	  Loading,
+	  Bubble
     }
 }
 </script>
@@ -479,6 +495,17 @@ export default {
 			text-align: center
 			font-size: 18px
 			line-height:44px
+	.pulldown-wrapper
+		position: absolute
+		width: 100%
+		left: 0
+		top: 44px
+		display: flex
+		justify-content center
+		align-items center
+		transition: all
+		.after-trigger
+			margin-top: 10px
 	.sellerContain
 		position:fixed
 		top:44px

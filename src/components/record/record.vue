@@ -9,7 +9,16 @@
 				<div class="back" @click="back()"><i class="icon-back"></i>返回</div>
 				<h1 class="title">验证记录</h1>
 		     </div>
-             <loading v-show="reflsh" title="释放即可刷新"></loading>
+             <div ref="pulldown" class="pulldown-wrapper" :style="pullDownStyle" v-if="pullDownRefresh">
+                <div class="before-trigger" v-if="beforePullDown">
+                    <bubble :y="bubbleY"></bubble>
+                </div>
+                <div class="after-trigger" v-else>
+                    <div v-if="pulling" class="loading">
+                        <loading></loading>
+                    </div>
+                </div>
+            </div>
              <div class="record-container">
                 <scroll class="record-list" 
                     ref="scroll"
@@ -37,7 +46,6 @@
                                 <div class="quatimenhao-code">{{item.validate_time}}</div>
                             </div>
                         </div>
-                        
                         <loading v-show="hasMore" title=""></loading>
                     </div>
                 </scroll>
@@ -48,6 +56,7 @@
 <script>
 import Scroll from 'base/scroll/scroll'
 import Loading from 'base/loading/loading'
+import Bubble from 'base/bubble/bubble'
 import {getRecord} from 'api/seller'
 import storage from 'best-storage'
 import {getPhoneType} from 'common/js/util'
@@ -66,10 +75,18 @@ export default {
                 stylesheet:{
                     minHeight:'0px'
                 },
-                pullDownRefresh:{threshold:90,stop:50}
+                pullDownRefresh:{threshold:60,stop:60},
+                beforePullDown:true,
+                bubbleY: 0,
+                bulling:false,
+                pullDownStyle: ''
             }
         },
         created(){
+            this.pullDownInitTop = 0
+            if(this.record.length === 0){
+                this.pullDownRefresh = false
+            }
             this._getRecrod()
             this.phoneType=getPhoneType()
             /*计算窗口高度 */
@@ -126,34 +143,30 @@ export default {
             },
             pullingDown(){
                 console.log('pulling data')
+                this.beforePullDown = false
+                this.pulling = true
                 this.title="刷新中"
                 setTimeout(()=>{
                     this._getRecrod()
                     this.$refs.scroll.finishPullDown()
+                     this.beforePullDown = true
                 },1000)
 		
 	        },
             scroll(pos) {
                 // console.log(pos)
-                this.scrollY = pos.y
-                if(this.scrollY<0){
-                    this.reflsh=false
-                }else{
-                    // console.log(123)
-                    this.reflsh=true
-                    /*定时器执行 */
-                    if(this.scrollY<50){
-				        this.title='下拉刷新'
-			        }
-                    setTimeout(()=>{
-                        this.reflsh=false
-                    },1000)
+                if (this.beforePullDown) {
+                    this.bubbleY = Math.max(0, pos.y + this.pullDownInitTop)
+                    this.pullDownStyle = `top:${Math.min(pos.y + 44 , 44)}px`
+                } else {
+                    this.bubbleY = 0
                 }
 	        },
         },
         components: {
             Scroll,
-            Loading
+            Loading,
+            Bubble
          }
     }
 </script>
@@ -198,6 +211,17 @@ export default {
                 text-align: center
                 font-size: 18px
                 line-height:44px
+        .pulldown-wrapper
+            position: absolute
+            width: 100%
+            left: 0
+            top: 44px
+            display: flex
+            justify-content center
+            align-items center
+            transition: all
+            .after-trigger
+                margin-top: 10px
         .header-ios
             display:flex
             height:64px
