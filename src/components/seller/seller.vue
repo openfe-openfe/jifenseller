@@ -275,6 +275,11 @@ export default {
 	scroll(pos) {
 		// console.log(pos.y)
 		this.scrollY = pos.y
+		if(this.scrollY<0){
+			this.pullDownRefresh=false
+		}else{
+			this.pullDownRefresh={threshold:60,stop:60}
+		}
 		let pullDownPostion=0
 		if(this.phoneType=='iOS'){
 			pullDownPostion = 64
