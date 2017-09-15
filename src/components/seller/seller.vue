@@ -153,7 +153,7 @@ export default {
 		count:1,
 		isWV:false,
 		count2:1,
-		pullDownRefresh:{threshold:60,stop:60},
+		pullDownRefresh:{threshold:90,stop:60},
 		beforePullDown:true,
 		bubbleY: 0,
 		bulling:false,
@@ -181,7 +181,7 @@ export default {
 	// 	})
 		
 	//   })
-	  this.pullDownInitTop = 0
+	  this.pullDownInitTop = -50
 	  this.listenScroll = true
 	  this.phoneType = getPhoneType()
 	  /* 隐藏title */
@@ -278,7 +278,7 @@ export default {
 		if(this.scrollY<0){
 			this.pullDownRefresh=false
 		}else{
-			this.pullDownRefresh={threshold:60,stop:60}
+			this.pullDownRefresh={threshold:90,stop:60}
 		}
 		let pullDownPostion=0
 		if(this.phoneType=='iOS'){
