@@ -203,6 +203,9 @@ export default {
 		if(getPhoneType()=='iOS'){
 			this.isiOS=`top:64px`
 		}
+		console.info(" %c 项目中所有开源组件插件 作者地址 欢迎star 关注 issue等~" ,"color:red;font-size:18px")
+		console.info(" %c 地址: https://github.com/songhaoreact" ,"color:#47c9bc;font-size:18px")
+		console.info(" %c FE公共团队: https://github.com/icloudcity" ,"color:#47c9bc;font-size:18px")
 	},
   methods:{
 	//   获取商户中心
