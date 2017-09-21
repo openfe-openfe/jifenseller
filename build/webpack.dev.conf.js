@@ -23,7 +23,7 @@ module.exports = merge(baseWebpackConfig, {
       'process.env': config.dev.env
     }),
     new vConsolePlugin({
-      enable: true // 发布代码前记得改回 false
+      enable: false // 发布代码前记得改回 false
     }),
     // https://github.com/glenjamin/webpack-hot-middleware#installation--usage
     new webpack.HotModuleReplacementPlugin(),

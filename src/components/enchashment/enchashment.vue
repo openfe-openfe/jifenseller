@@ -9,9 +9,14 @@
 				<div class="back" @click="back()"><i class="icon-back"></i>返回</div>
 				<h1 class="title">提现</h1>
 		     </div>
-             <div class="txInput">
-                <input ref="query" v-model="query" class="box" :placeholder="placeholder" type="number"/>
-             </div>
+             <div class="box">
+                <wc-keyboard 
+                    placeholder="请输入提现金额"
+                    label="提现金额"
+                    inter="5"
+                    decimal="2"
+                    v-model="query"/>
+            </div>
              <div class="title2">可提现账户余额:{{ValidateAccount.keyongyue}}元,当前账户余额:{{ValidateAccount.zongjine}}元</div>
              <div class="button">
                 <button @click.stop.prevent="submit()" v-if="disabled==false">提交</button>
@@ -176,25 +181,12 @@ import storage from 'best-storage'
                 text-align: center
                 font-size: 18px
                 line-height:64px
-        .txInput
-            display:flex
-            align-items: center
-            box-sizing: border-box
-            background:#fff
-            height:50px
-            width:100%
+        .box
+            height: 100%
+            height: 50px
+            padding:10px
             margin-top:10px
-            .box
-                flex: 1
-                margin: 0 5px
-                line-height: 18px
-                background: #fff
-                color: #666
-                font-size: 14px
-                text-align:center
-                padding-left:10px
-                &::placeholder
-                    color: #999
+            background:#fff
         .title2
             color:#333
             font-size:12px

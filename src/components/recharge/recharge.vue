@@ -16,9 +16,14 @@
                     </div>
                     <div class="czname">{{ValidateAccount.seller_name}}</div>
             </div>
-             <div class="czInput">
-                <input ref="query" v-model="query" class="box" :placeholder="placeholder"/>
-             </div>
+            <div class="box">
+                <wc-keyboard 
+                    placeholder="请输入充值金额"
+                    label="充值金额"
+                    inter="8"
+                    decimal="2"
+                    v-model="query"/>
+            </div>
              <div class="button">
                 <button @click.stop.prevent="pay()" v-if="disabled==false">立即充值</button>
                 <button class="disa" v-if="disabled==true" disabled="disabled">立即充值</button>
@@ -186,24 +191,12 @@ import {getPhoneType} from 'common/js/util'
                     color:#666
                     font-size:14px
                     // font-weight:lighter
-        .czInput
-            display:flex
-            align-items: center
-            box-sizing: border-box
-            background:#fff
-            height:50px
-            width:100%
+        .box
+            height: 100%
+            height: 50px
+            padding:10px
             margin-top:10px
-            .box
-                flex: 1
-                margin: 0 5px
-                line-height: 18px
-                background: #fff
-                color: #666
-                font-size: 14px
-                padding-left:10px
-                &::placeholder
-                    color: #999
+            background:#fff
         .title2
             color:#333
             font-size:12px
