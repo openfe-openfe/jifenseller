@@ -17,7 +17,7 @@
                     <div class="czname">{{ValidateAccount.seller_name}}</div>
             </div>
             <div class="box">
-                <wc-keyboard 
+                <sh-keyboard 
                     placeholder="请输入充值金额"
                     label="充值金额"
                     inter="8"

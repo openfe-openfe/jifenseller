@@ -14,8 +14,9 @@ Vue.use(Alert)
 Vue.use(Confirm)
 Vue.use(Toast)
 
-import KeyBoard from 'base/wc-keyboard'
-Vue.use(KeyBoard)
+import shKeyBoard from 'vue-num-keyboard'
+import 'vue-num-keyboard/style.css'
+Vue.use(shKeyBoard)
 
 Vue.config.productionTip = false
 // fastclick.attach(document.body)

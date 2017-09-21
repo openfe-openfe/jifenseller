@@ -10,7 +10,7 @@
 				<h1 class="title">提现</h1>
 		     </div>
              <div class="box">
-                <wc-keyboard 
+                <sh-keyboard 
                     placeholder="请输入提现金额"
                     label="提现金额"
                     inter="5"
