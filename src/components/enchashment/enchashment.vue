@@ -187,6 +187,8 @@ import storage from 'best-storage'
             padding:10px
             margin-top:10px
             background:#fff
+            display:flex
+            align-items:center
         .title2
             color:#333
             font-size:12px
