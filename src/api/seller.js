@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const api ={
-  base:'http://test.icloudcity.cn/jifen/'
+  base:'http://api.wxtxcxxkj.com/jifen_3_4_00'
 }
 
 // 将对象拼接成 key1=val1&key2=val2&key3=val3 的字符串形式

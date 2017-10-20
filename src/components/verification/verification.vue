@@ -104,7 +104,7 @@
                 const time=this.verfiy.time
                 getIs(validate,user_account,seller_wv,code,time,sid).then((res)=>{
                     if(res.flag==='1'){
-                        this.$alert('验证成功',{
+                        this.$alert(res.msg,{
                             title:'提醒',
                             btn:{
                                 text:'确定'

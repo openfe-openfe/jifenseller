@@ -89,11 +89,11 @@ import {getPhoneType} from 'common/js/util'
                 const seller_id=storage.get('seller_id')
                 const user_account=storage.get('user_account')
                 const token=storage.get('token')
-                const amount=this.$refs.query.value
+                const amount=this.query
                 getPay(token,seller_id,amount,user_account).then((res)=>{
                     if(res.flag === '1'){
                         // 跳转微信支付
-                        window.location.href = res.data +'&redirect_url=' + encodeURI('http://webapp.icloudcity.cn:7070')
+                        window.location.href = res.data +'&redirect_url=' + encodeURI('http://app.wxtxcxxkj.com:7070')
                     }
                 })
             },

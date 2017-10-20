@@ -87,7 +87,7 @@ import storage from 'best-storage'
                     this.disabled=true
                     const seller_id=storage.get('sid')
                     const token=storage.get('token')
-                    const amount=this.$refs.query.value
+                    const amount=this.query
                     const user_account=storage.get('user_account')
                     getApply(token,seller_id,amount,user_account).then((res)=>{
                         if(res.flag === '1'){
