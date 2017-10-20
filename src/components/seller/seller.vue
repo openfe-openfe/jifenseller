@@ -163,24 +163,24 @@ export default {
     },
   created() {
 	  // 检测是不是在潍V打开
-	//   isWV()
-	//   .then(()=>{
-	// 	  console.log('潍V内')
-	//   })
-	//   .catch((e)=>{
-	// 	// window.location.href="weiv://"
-	// 	this.$alert('支付成功,请在潍V内查看',{
-	// 		title:'提醒',
-	// 		btn:{
-	// 			text:'确定'
-	// 		}
-	// 	})
-	// 	.then(()=>{
-	// 		// this.isWV=true
-	// 		window.location.href="weiv://"
-	// 	})
+	  isWV()
+	  .then(()=>{
+		  console.log('潍V内')
+	  })
+	  .catch((e)=>{
+		// window.location.href="weiv://"
+		this.$alert('请在潍V内查看',{
+			title:'提醒',
+			btn:{
+				text:'确定'
+			}
+		})
+		.then(()=>{
+			// this.isWV=true
+			window.location.href="weiv://"
+		})
 		
-	//   })
+	  })
 	  this.pullDownInitTop = -50
 	  this.listenScroll = true
 	  this.phoneType = getPhoneType()
@@ -237,8 +237,8 @@ export default {
 		const sid = storage.get('sid')
 		getConsumptionLogs(sid,this.page).then((res) => {
 			if(res.flag ==='1'){
-				this.zdList = res.data
-				this.count=res.page.count
+				this.zdList = res.data || []
+				this.count = res.page.count
 				// console.log(this.count)
 				this.reflsh=false
 				this._checkMore(res.data)

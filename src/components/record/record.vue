@@ -85,9 +85,6 @@ export default {
         },
         created(){
             this.pullDownInitTop = 0
-            if(this.record.length === 0){
-                this.pullDownRefresh = false
-            }
             this._getRecrod()
             this.phoneType=getPhoneType()
             /*计算窗口高度 */
@@ -137,7 +134,7 @@ export default {
             _checkMore(data,res){
                 const data2 = data
                 // console.log(data2.length)
-                console.log(res.flag)
+                // console.log(res.flag)
                 this.reflsh = false
                 if(!data2.length || res.page.page == '1' || res.flag == '0'){
                     
