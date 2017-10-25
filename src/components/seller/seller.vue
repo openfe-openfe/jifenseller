@@ -1,130 +1,136 @@
 <template>
-    <div class="seller">
-		<div v-if="phoneType == 'Android'">
-			<div class="header" v-if="scrollY > -100">
-				<div class="back" @click="_back()"><i class="icon-back"></i>返回</div>
-				<h1 class="title">{{ValidateAccount.seller_name}}</h1>
-			</div>
-			<div class="headerW" v-if="scrollY < -100">
-				<div class="back" @click="_back()"><i class="icon-back"></i>返回</div>
-				<h1 class="title">{{ValidateAccount.seller_name}}</h1>
-			</div>
-		</div>
-		<div v-if="phoneType == 'iOS'">
-			<div class="header-ios" v-if="scrollY > -100">
-				<div class="back" @click="_back()"><i class="icon-back"></i>返回</div>
-				<h1 class="title">{{ValidateAccount.seller_name}}</h1>
-			</div>
-			<div class="headerW-ios" v-if="scrollY < -100">
-				<div class="back" @click="_back()"><i class="icon-back"></i>返回</div>
-				<h1 class="title">{{ValidateAccount.seller_name}}</h1>
-			</div>
-		</div>
-		<div ref="pulldown" class="pulldown-wrapper" :style="pullDownStyle" v-if="pullDownRefresh">
-                <div class="before-trigger" v-if="beforePullDown">
-                    <bubble :y="bubbleY"></bubble>
-                </div>
-                <div class="after-trigger" v-else>
-                    <div v-if="pulling" class="loading">
-                        <loading></loading>
-                    </div>
-                </div>
-        </div>
-		<div class="sellerContain" :style="isiOS">
-			<scroll  @scroll="scroll"
-					 :listenScroll="listenScroll"
-					 @scrollToEnd="loadMore"
-					 :pullup="pullup"
-					 :pullDownRefresh="pullDownRefresh"
-					 @pullingDown="pullingDown"
-					 :probeType="3"
-					 ref="scroll" class="sellerContent" :data="zdList">
-				<div>
-					<div class="m-header">
-					<div class="m-money">
-						<div class="keyong">可用余额(元)</div>
-						<div class="eye" @click="selectEye()">
-							<i class="icon-eye" v-if="eyeOpen"></i>
-							<i class="icon-eyeclose" v-if="eyeClose"></i>
-						</div>
-						<div class="kymony"><i class="icon-hua"></i>
-						<span v-if="eyeOpen">{{ValidateAccount.keyongyue}}</span>
-						<span v-if="eyeClose">{{shuffleArry[0]}}</span>
-						<i class="icon-hua"></i></div>
-					</div>
-					<div class="verfiy">
-						<div @click="selectHX()" class="verfiy-code"><i class="icon-code"></i>扫码核销</div>
-						<div @click="selectJL()" class="verfiy-jl"><i class="icon-jl"></i>验证记录</div>
-					</div>
+	<div>
+		<div class="seller" v-if="skeleton">
+			<div v-if="phoneType == 'Android'">
+				<div class="header" v-if="scrollY > -100">
+					<div class="back" @click="_back()"><i class="icon-back"></i>返回</div>
+					<h1 class="title">{{ValidateAccount.seller_name}}</h1>
 				</div>
-				<div class="m-zc">
-					<div class="zcmony">
-						<div>资产总额</div>
-						<div class="zcmonynum">
-						<span v-if="eyeOpen">{{ValidateAccount.zongjine}}</span>
-						<span v-if="eyeClose">
-							<i class="icon-hua"></i>
-							<i class="icon-hua"></i>
-							<i class="icon-hua"></i>
-							<i class="icon-hua"></i>
-						</span>
+				<div class="headerW" v-if="scrollY < -100">
+					<div class="back" @click="_back()"><i class="icon-back"></i>返回</div>
+					<h1 class="title">{{ValidateAccount.seller_name}}</h1>
+				</div>
+			</div>
+			<div v-if="phoneType == 'iOS'">
+				<div class="header-ios" v-if="scrollY > -100">
+					<div class="back" @click="_back()"><i class="icon-back"></i>返回</div>
+					<h1 class="title">{{ValidateAccount.seller_name}}</h1>
+				</div>
+				<div class="headerW-ios" v-if="scrollY < -100">
+					<div class="back" @click="_back()"><i class="icon-back"></i>返回</div>
+					<h1 class="title">{{ValidateAccount.seller_name}}</h1>
+				</div>
+			</div>
+			<div ref="pulldown" class="pulldown-wrapper" :style="pullDownStyle" v-if="pullDownRefresh">
+					<div class="before-trigger" v-if="beforePullDown">
+						<bubble :y="bubbleY"></bubble>
+					</div>
+					<div class="after-trigger" v-else>
+						<div v-if="pulling" class="loading">
+							<loading></loading>
 						</div>
 					</div>
-					<div class="djmony">
-						<div>冻结资金</div>
-						<div class="djmonynum">
-							<span v-if="eyeOpen">{{ValidateAccount.dongjieyue}}</span>
+			</div>
+			<div class="sellerContain" :style="isiOS">
+				<scroll  @scroll="scroll"
+						:listenScroll="listenScroll"
+						@scrollToEnd="loadMore"
+						:pullup="pullup"
+						:pullDownRefresh="pullDownRefresh"
+						@pullingDown="pullingDown"
+						:probeType="3"
+						ref="scroll" class="sellerContent" :data="zdList">
+					<div>
+						<div class="m-header">
+						<div class="m-money">
+							<div class="keyong">可用余额(元)</div>
+							<div class="eye" @click="selectEye()">
+								<i class="icon-eye" v-if="eyeOpen"></i>
+								<i class="icon-eyeclose" v-if="eyeClose"></i>
+							</div>
+							<div class="kymony"><i class="icon-hua"></i>
+							<span v-if="eyeOpen">{{ValidateAccount.keyongyue}}</span>
+							<span v-if="eyeClose">{{shuffleArry[0]}}</span>
+							<i class="icon-hua"></i></div>
+						</div>
+						<div class="verfiy">
+							<div @click="selectHX()" class="verfiy-code"><i class="icon-code"></i>扫码核销</div>
+							<div @click="selectJL()" class="verfiy-jl"><i class="icon-jl"></i>验证记录</div>
+						</div>
+					</div>
+					<div class="m-zc">
+						<div class="zcmony">
+							<div>资产总额</div>
+							<div class="zcmonynum">
+							<span v-if="eyeOpen">{{ValidateAccount.zongjine}}</span>
 							<span v-if="eyeClose">
 								<i class="icon-hua"></i>
 								<i class="icon-hua"></i>
 								<i class="icon-hua"></i>
 								<i class="icon-hua"></i>
 							</span>
+							</div>
+						</div>
+						<div class="djmony">
+							<div>冻结资金</div>
+							<div class="djmonynum">
+								<span v-if="eyeOpen">{{ValidateAccount.dongjieyue}}</span>
+								<span v-if="eyeClose">
+									<i class="icon-hua"></i>
+									<i class="icon-hua"></i>
+									<i class="icon-hua"></i>
+									<i class="icon-hua"></i>
+								</span>
+							</div>
 						</div>
 					</div>
-				</div>
-				<div class="zd">账单</div>
-				<div class="zdlist">
-					<div @click="selectItem(item)" class="zdItem" v-for="item in zdList">
-						<div class="itemname">
-							<div>{{item.title}}</div>
-							<div class="xfnum" v-if="item.types == 'xf'">-{{item.amount}}</div>
-							<div class="kfnum" v-if="item.types == 'kf'">-{{item.amount}}</div>
-							<div class="num" v-if="item.types == 'cz'">
-								+{{item.amount}}
+					<div class="zd">账单</div>
+					<div class="zdlist">
+						<div @click="selectItem(item)" class="zdItem" v-for="item in zdList">
+							<div class="itemname">
+								<div>{{item.title}}</div>
+								<div class="xfnum" v-if="item.types == 'xf'">-{{item.amount}}</div>
+								<div class="kfnum" v-if="item.types == 'kf'">-{{item.amount}}</div>
+								<div class="num" v-if="item.types == 'cz'">
+									+{{item.amount}}
+								</div>
+								<div class="txnum" v-if="item.types == 'tx'">-{{item.amount}}</div>
 							</div>
-							<div class="txnum" v-if="item.types == 'tx'">-{{item.amount}}</div>
-						</div>
-						<div class="itemtime">
-							<div class="">{{item.showtime}}</div>
-							<div class="txitemtitle" v-if="item.types == 'tx'" >
-								<span>{{item.status}}</span>
-								<i class="icon-right"></i>
+							<div class="itemtime">
+								<div class="">{{item.showtime}}</div>
+								<div class="txitemtitle" v-if="item.types == 'tx'" >
+									<span>{{item.status}}</span>
+									<i class="icon-right"></i>
+								</div>
+								<div class="itemtitle" v-if="item.types == 'cz'" >{{item.status}}</div>
 							</div>
-							<div class="itemtitle" v-if="item.types == 'cz'" >{{item.status}}</div>
 						</div>
+						<loading v-show="hasMore" title="数据加载中..."></loading>
 					</div>
-					<loading v-show="hasMore" title="数据加载中..."></loading>
+					
+					</div>
+				</scroll>
+				<div class="foot">
+					<div class="tixian" @click="selectTX()">提现</div>
+					<div class="chongzhi" @click="selectCZ()">充值</div>
 				</div>
-				
+				<div class="fixed" v-if="isWV">
+					<img src="http://oij04cgoe.bkt.clouddn.com/wv.png"/>
+					<p>支付完成,请手动打开潍V</p>
 				</div>
-			</scroll>
-			<div class="foot">
-				<div class="tixian" @click="selectTX()">提现</div>
-				<div class="chongzhi" @click="selectCZ()">充值</div>
+				<router-view></router-view>
 			</div>
-			<div class="fixed" v-if="isWV">
-				<img src="http://oij04cgoe.bkt.clouddn.com/wv.png"/>
-				<p>支付完成,请手动打开潍V</p>
-			</div>
-			<router-view></router-view>
-		</div>
-    </div>
+    	</div>
+		<div v-for="load in loades" v-if="!skeleton">
+    		<skeleton-screen></skeleton-screen>
+  		</div>
+	</div>
 </template>
 
 <script>
 import Scroll from 'base/scroll/scroll'
 import Loading from 'base/loading/loading'
+import SkeletonScreen from 'base/skeleton/skeleton-screen'
 import Bubble from 'base/bubble/bubble'
 import {getValidateAccount,getConsumptionLogs,getCode} from 'api/seller'
 import {shuffle,getPhoneType,isWV} from 'common/js/util'
@@ -137,6 +143,8 @@ export default {
   data() {
       return {
         ValidateAccount: [],
+		skeleton: false,
+    	loades: 10,
 		zdList: [],
 		eyeOpen:true,
 		eyeClose:false,
@@ -163,24 +171,24 @@ export default {
     },
   created() {
 	  // 检测是不是在潍V打开
-	  isWV()
-	  .then(()=>{
-		  console.log('潍V内')
-	  })
-	  .catch((e)=>{
-		// window.location.href="weiv://"
-		this.$alert('请在潍V内查看',{
-			title:'提醒',
-			btn:{
-				text:'确定'
-			}
-		})
-		.then(()=>{
-			// this.isWV=true
-			window.location.href="weiv://"
-		})
+	//   isWV()
+	//   .then(()=>{
+	// 	  console.log('潍V内')
+	//   })
+	//   .catch((e)=>{
+	// 	// window.location.href="weiv://"
+	// 	this.$alert('请在潍V内查看',{
+	// 		title:'提醒',
+	// 		btn:{
+	// 			text:'确定'
+	// 		}
+	// 	})
+	// 	.then(()=>{
+	// 		// this.isWV=true
+	// 		window.location.href="weiv://"
+	// 	})
 		
-	  })
+	//   })
 	  this.pullDownInitTop = -50
 	  this.listenScroll = true
 	  this.phoneType = getPhoneType()
@@ -217,6 +225,7 @@ export default {
 		getValidateAccount(sid,seller_wv,token).then((res) => {
 			if (res.flag === '1') {
 			this.ValidateAccount = res.data
+			this.skeleton = true
 			this.reflsh=false
 			}else{
 			    // alert(res.msg)
@@ -410,6 +419,7 @@ export default {
   },
   components: {
       Scroll,
+	  SkeletonScreen,
 	  Loading,
 	  Bubble
     }
